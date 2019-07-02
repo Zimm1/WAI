@@ -3,10 +3,10 @@
 const fs        = require('fs');
 const path      = require('path');
 const mongoose = require('mongoose');
-const basename  = path.basename(__filename);
-const db        = {};
-
 const Schema = mongoose.Schema;
+
+
+const db        = {};
 
 fs
     .readdirSync(__dirname)

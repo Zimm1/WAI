@@ -1,22 +1,16 @@
-FROM node:10-alpine AS builder
-
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
-
-COPY package*.json ./
-RUN npm install
-
-
 FROM node:10-alpine
 
-RUN mkdir -p /home/node/wai/node_modules && chown -R node:node /home/node/wai
+# Create app directory
+RUN mkdir -p /home/node/wai
 WORKDIR /home/node/wai
-COPY --from=builder node_modules node_modules
 
-USER node
+# Install dependencies
+ADD package.json .
+RUN npm install
 
-COPY --chown=node:node . .
+# Bundle app source
+ADD . .
 
+# Exports
 EXPOSE 8000
-
-CMD ["npm", "run", "start:prod"]
+CMD [ "npm", "run", "start" ]
