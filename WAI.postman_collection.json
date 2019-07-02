@@ -1,0 +1,101 @@
+{
+	"variables": [],
+	"info": {
+		"name": "WAI",
+		"_postman_id": "1ad366c8-ddd9-d9ba-649d-57bf2ca93b23",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Item",
+			"description": "",
+			"item": [
+				{
+					"name": "WAI - Item - Get all",
+					"request": {
+						"url": "{{host}}/api/item",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Item - Get",
+					"request": {
+						"url": "{{host}}/api/item/3",
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Item - Add",
+					"request": {
+						"url": "{{host}}/api/item",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Item1\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Item - Update",
+					"request": {
+						"url": "{{host}}/api/item/3",
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Oggetto\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Item - Delete",
+					"request": {
+						"url": "{{host}}/api/item/2",
+						"method": "DELETE",
+						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WAI - Root",
+			"request": {
+				"url": "{{host}}/api",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
