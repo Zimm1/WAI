@@ -2,20 +2,24 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const config = require('config');
 
 const clientRouter = require('./client/client.router');
 const apiRouter = require('./api/api.router');
 
 
-// Constants
-const PORT = 8000;
+const PORT = config.get('EXPRESS.PORT');
 
-const app = express();
+mongooseInit().then(() => {
+    expressInit();
+}).catch((e) => {
+    console.error('Critical error: ' + e.message);
+});
 
-expressInit();
-mongooseInit();
+
 
 function expressInit() {
+    const app = express();
     app.use('/api', apiRouter);
     app.use(clientRouter);
 
@@ -24,15 +28,12 @@ function expressInit() {
 }
 
 function mongooseInit() {
-    mongoose
+    return mongoose
         .connect(
-            'mongodb://mongo:27017/wai',
+            config.get('MONGO.DB'),
             {useNewUrlParser: true}
         )
         .then(() => {
             mongoose.connection.on('error', console.error.bind(console, 'MongoDB error:'));
-        })
-        .catch((e) => {
-            console.error(e);
         });
 }

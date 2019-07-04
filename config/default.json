@@ -1,0 +1,26 @@
+{
+  "AUTH": {
+    "TOKEN_EXPIRE_SECONDS": 86400,
+    "JWT_SECRET": ":!5NC+hT2~P6q,U%",
+    "ROLES": {
+      "ADMIN": {
+        "_id": 0,
+        "name": "admin"
+      },
+      "EDITOR": {
+        "_id": 1,
+        "name": "editor"
+      },
+      "CONSUMER": {
+        "_id": 2,
+        "name": "consumer"
+      }
+    }
+  },
+  "EXPRESS": {
+    "PORT": 8000
+  },
+  "MONGO": {
+    "DB": "mongodb://mongo:27017/wai"
+  }
+}
