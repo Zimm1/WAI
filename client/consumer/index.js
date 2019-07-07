@@ -63,13 +63,15 @@
         function initPosition(){
             mymap = L.map('map',{
                 maxBoundsViscosity: 1.0
-            }).setView([myCoordinate['lat'], myCoordinate['lng']],5);
+            }).fitWorld();
+            //.setView([myCoordinate['lat'], myCoordinate['lng']],5);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
                 maxZoom: 20,
                 minZoom: 2
             }).addTo(mymap);
             mymap.setMaxBounds(mybounds);
-            mymap.locate({watch:false, setView: true, maxZoom: 18, timeout: 30000});
+            mymap.doubleClickZoom.disable();
+            mymap.locate({watch:false, setView: true, maxZoom: 18, timeout: 30000,enableHighAccuracy: true});
             mymap.zoomControl.setPosition('bottomright');
             mymap.on('click', clickOnMap);
             mymap.on('locationfound', onLocationFound);
@@ -84,12 +86,11 @@
             var param = e.latlng;
             myCoordinate['lat'] = param['lat'];
             myCoordinate['lng'] = param['lng'];
+            console.log(param);
             updatePosition();
         }
 
         function updatePosition(){
-            mymap.panTo([myCoordinate['lat'], myCoordinate['lng']]);
-            mymap.setZoom(18);
             if(posMarker){
                 mymap.removeLayer(posMarker);
             }
@@ -99,6 +100,14 @@
                 fillOpacity: 0.5,
                 radius: 5
             }).addTo(mymap);
+            mymap.panTo(posMarker.getLatLng());
+            mymap.setZoomAround(posMarker.getLatLng(),18);
+            /*mymap.panTo([myCoordinate['lat'], myCoordinate['lng']]);
+            mymap.setZoomAround([myCoordinate['lat'], myCoordinate['lng']],18);*/
+            /*var latLngs = [myCoordinate['lat'], myCoordinate['lng']];
+            var markerBounds = L.latLngBounds(latLngs);
+            mymap.fitBounds(markerBounds);*/
+            //mymap.setZoom(18);
         }
 
         function clickOnMap(e){
