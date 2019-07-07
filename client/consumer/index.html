@@ -12,84 +12,48 @@
     <link rel="stylesheet" href="../common/lib/angular-material/angular-material.css"/>
     <link rel="stylesheet" href="./assets/app.css"/>
 
-    <style type="text/css">
-        /**
-         * Hide when Angular is not yet loaded and initialized
-         */
-        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
-          display: none !important;
-        }
-    </style>
-
-  </head>
-
-  <body ng-app="starterApp" layout="column" ng-controller="UserController as ul" ng-cloak>
-
-    <md-toolbar layout="row">
-      <md-button class="menu" hide-gt-sm ng-click="ul.toggleList()" aria-label="Show User List">
-        <md-icon md-svg-icon="menu" ></md-icon>
-      </md-button>
-      <div flex layout="row" layout-align="center">
-        <h1 id="title">Consumer</h1>
-      </div>
-    </md-toolbar>
-
-    <div flex layout="row">
-
-        <md-sidenav ng-click="ul.toggleList()" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2" >
-          <md-list>
-            <md-list-item ng-repeat="it in ul.users">
-                <md-button ng-click="ul.selectUser(it)" ng-class="{'selected' : it === ul.selected }">
-                  <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
-                  {{it.name}}
-                </md-button>
-            </md-list-item>
-          </md-list>
-        </md-sidenav>
-
-        <md-content flex id="content">
-          <md-icon md-svg-icon="{{ul.selected.avatar}}" class="avatar"></md-icon>
-          <h2>{{ul.selected.name}}</h2>
-          <p>{{ul.selected.content}}</p>
-
-          <md-button class="share" md-no-ink ng-click="ul.makeContact(ul.selected)" aria-label="Share with {{ ul.selected.name }}">
-            <md-icon md-svg-icon="share"></md-icon>
-          </md-button>
-        </md-content>
-
-    </div>
-
     <script src="../common/lib/angular/angular.js"></script>
     <script src="../common/lib/angular/angular-animate.js"></script>
     <script src="../common/lib/angular/angular-aria.js"></script>
     <script type="text/javascript" src="../common/lib/angular-material/angular-material.js"></script>
 
-    <script src="./src/users/Users.js"></script>
-    <script src="./src/users/UserController.js"></script>
-    <script src="./src/users/UserService.js"></script>
+    <script src="index.js"></script>
+    <script src="src/map/mapService.js"></script>
 
-    <script type="text/javascript">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+  </head>
 
-          angular
-              .module('starterApp', ['ngMaterial', 'users'])
-              .config(function($mdThemingProvider, $mdIconProvider){
+  <body ng-app="consumerApp" ng-controller="mainController">
 
-                  $mdIconProvider
-                      .defaultIconSet("../common/assets/svg/avatars.svg", 128)
-                      .icon("menu"       , "../common/assets/svg/menu.svg"        , 24)
-                      .icon("share"      , "../common/assets/svg/share.svg"       , 24)
-                      .icon("google_plus", "../common/assets/svg/google_plus.svg" , 512)
-                      .icon("hangouts"   , "../common/assets/svg/hangouts.svg"    , 512)
-                      .icon("twitter"    , "../common/assets/svg/twitter.svg"     , 512)
-                      .icon("phone"      , "../common/assets/svg/phone.svg"       , 512);
+      <div class="firstLevel">
+        <md-toolbar class="md-hue-2">
+          <div class="md-toolbar-tools">
+            <md-button class="md-icon-button" aria-label="Settings">
+              <md-icon md-svg-icon="menu"></md-icon>
+            </md-button>
 
-                      $mdThemingProvider.theme('default')
-                          .primaryPalette('brown')
-                          .accentPalette('red');
-
-              });
-
-    </script>
-
+            <md-autocomplete
+                    ng-disabled="isDisabled"
+                    md-no-cache="noCache"
+                    md-selected-item-change="itemSelectedChanged(item)"
+                    md-selected-item="selectedItem"
+                    md-search-text="searchText"
+                    md-items="item in getQueryResult(searchText)"
+                    md-item-text="item.display_name"
+                    md-min-length="minLength"
+                    placeholder="Inserisci un indirizzo">
+              <md-item-template>
+              <span md-highlight-text = "searchText"
+                    md-highlight-flags = "^i">{{item.display_name}}</span>
+              </md-item-template>
+              <md-not-found>
+                Nessun luogo corrisponde a "{{searchText}}".
+              </md-not-found>
+            </md-autocomplete>
+          </div>
+        </md-toolbar>
+      </div>
+    <div id="map" class="mapLevel" ></div>
   </body>
 </html>
