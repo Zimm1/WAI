@@ -89,10 +89,22 @@ function generateJwt(user) {
     }, config.get("AUTH.JWT_SECRET"));
 }
 
+function getRoleIds() {
+    const o = config.get("AUTH.ROLES");
+    const roleIds = [];
+
+    Object.keys(o).map((key) => {
+        roleIds.push(o[key]._id);
+    });
+
+    return roleIds;
+}
+
 module.exports = {
     authInit,
     auth,
     generateSalt,
     generateHash,
-    generateJwt
+    generateJwt,
+    getRoleIds
 };
