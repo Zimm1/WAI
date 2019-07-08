@@ -6,7 +6,7 @@ const expressUtils = require("../utils/expressUtils");
 const ROLES = config.get("AUTH.ROLES");
 
 
-function register(req, res, next) {
+function signup(req, res, next) {
     let user = new model.user({
         username: req.body.username,
         email: req.body.email,
@@ -47,6 +47,6 @@ function login(req, res, next) {
 }
 
 module.exports = {
-    register,
+    signup,
     login
 };

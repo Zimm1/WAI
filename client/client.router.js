@@ -10,8 +10,8 @@ router.get('/editor*', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'editor/index.html'));
 });
 
-router.use(express.static(path.join(__dirname, 'consumer')));
-router.get('*', (req, res, next) => {
+router.use('/', express.static(path.join(__dirname, 'consumer')));
+router.get('/*', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'consumer/index.html'));
 });
 

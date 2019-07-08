@@ -8,9 +8,12 @@
     <meta name="description" content="">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
+    <base href="/" />
+
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="../common/lib/angular-material/angular-material.css"/>
-    <link rel="stylesheet" href="./assets/app.css"/>
+    <link rel="stylesheet" href="/assets/app.css"/>
 
     <style type="text/css">
         /**
@@ -20,76 +23,31 @@
           display: none !important;
         }
     </style>
-
   </head>
 
-  <body ng-app="starterApp" layout="column" ng-controller="UserController as ul" ng-cloak>
-
-    <md-toolbar layout="row">
-      <md-button class="menu" hide-gt-sm ng-click="ul.toggleList()" aria-label="Show User List">
-        <md-icon md-svg-icon="menu" ></md-icon>
-      </md-button>
-      <div flex layout="row" layout-align="center">
-        <h1 id="title">Consumer</h1>
-      </div>
-    </md-toolbar>
-
-    <div flex layout="row">
-
-        <md-sidenav ng-click="ul.toggleList()" md-is-locked-open="$mdMedia('gt-sm')" md-component-id="left" class="md-whiteframe-z2" >
-          <md-list>
-            <md-list-item ng-repeat="it in ul.users">
-                <md-button ng-click="ul.selectUser(it)" ng-class="{'selected' : it === ul.selected }">
-                  <md-icon md-svg-icon="{{it.avatar}}" class="avatar"></md-icon>
-                  {{it.name}}
-                </md-button>
-            </md-list-item>
-          </md-list>
-        </md-sidenav>
-
-        <md-content flex id="content">
-          <md-icon md-svg-icon="{{ul.selected.avatar}}" class="avatar"></md-icon>
-          <h2>{{ul.selected.name}}</h2>
-          <p>{{ul.selected.content}}</p>
-
-          <md-button class="share" md-no-ink ng-click="ul.makeContact(ul.selected)" aria-label="Share with {{ ul.selected.name }}">
-            <md-icon md-svg-icon="share"></md-icon>
-          </md-button>
-        </md-content>
-
-    </div>
+  <body ng-app="app" layout="column" ng-cloak>
+    <wai-toolbar></wai-toolbar>
+    <div ng-view flex></div>
 
     <script src="../common/lib/angular/angular.js"></script>
     <script src="../common/lib/angular/angular-animate.js"></script>
     <script src="../common/lib/angular/angular-aria.js"></script>
-    <script type="text/javascript" src="../common/lib/angular-material/angular-material.js"></script>
+    <script src="../common/lib/angular/angular-route.js"></script>
+    <script src="../common/lib/angular/angular-messages.js"></script>
+    <script src="../common/lib/angular/ngStorage.js"></script>
+    <script src="../common/lib/angular-material/angular-material.js"></script>
 
-    <script src="./src/users/Users.js"></script>
-    <script src="./src/users/UserController.js"></script>
-    <script src="./src/users/UserService.js"></script>
+    <script src="app.module.js"></script>
 
-    <script type="text/javascript">
+    <script src="features/auth/auth.module.js"></script>
+    <script src="features/auth/auth.controller.js"></script>
+    <script src="features/auth/auth.service.js"></script>
 
-          angular
-              .module('starterApp', ['ngMaterial', 'users'])
-              .config(function($mdThemingProvider, $mdIconProvider){
+    <script src="features/toolbar/toolbar.module.js"></script>
+    <script src="features/toolbar/toolbar.controller.js"></script>
 
-                  $mdIconProvider
-                      .defaultIconSet("../common/assets/svg/avatars.svg", 128)
-                      .icon("menu"       , "../common/assets/svg/menu.svg"        , 24)
-                      .icon("share"      , "../common/assets/svg/share.svg"       , 24)
-                      .icon("google_plus", "../common/assets/svg/google_plus.svg" , 512)
-                      .icon("hangouts"   , "../common/assets/svg/hangouts.svg"    , 512)
-                      .icon("twitter"    , "../common/assets/svg/twitter.svg"     , 512)
-                      .icon("phone"      , "../common/assets/svg/phone.svg"       , 512);
-
-                      $mdThemingProvider.theme('default')
-                          .primaryPalette('brown')
-                          .accentPalette('red');
-
-              });
-
-    </script>
-
+    <script src="features/users/users.module.js"></script>
+    <script src="features/users/users.controller.js"></script>
+    <script src="features/users/users.service.js"></script>
   </body>
 </html>

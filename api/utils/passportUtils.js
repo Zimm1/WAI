@@ -6,16 +6,8 @@ function initPassport() {
     passport.use(new LocalStrategy(
         function (username, password, done) {
             model.user.findOne({ username }).then((user) => {
-                if (!user) {
-                    return done(null, false, {
-                        message: 'User not found'
-                    });
-                }
-
-                if (!user.checkPassword(password)) {
-                    return done(null, false, {
-                        message: 'Password is wrong'
-                    });
+                if (!user || !user.checkPassword(password)) {
+                    return done(null, false, 'Incorrect username or password');
                 }
 
                 done(null, user);

@@ -1,0 +1,69 @@
+<br>
+<md-content flex layout="row" layout-align="center" ng-controller="AuthController as ctrl">
+    <md-card id="login-card" flex>
+        <md-toolbar style="min-height:48px; max-height: 30px; background-color: lightgray; color: #191919">
+            <div class="md-toolbar-tools">
+                <h1 flex>{{ctrl.login ? "Log in" : "Sign up"}} to WheRE</h1>
+            </div>
+        </md-toolbar>
+        <md-card-content>
+            <div ng-show="ctrl.error">
+                <md-card md-theme="error" md-theme-watch>
+                    <md-card-content layout="row" layout-align="space-between center">
+                        <span>{{ctrl.error}}</span>
+                            <md-button class="md-icon-button" ng-click="ctrl.errorCloseClick()" aria-label="Close" style="margin: 0">
+                                <md-icon class="name">close</md-icon>
+                            </md-button>
+                    </md-card-content>
+                </md-card>
+                <br>
+            </div>
+
+            <form name="userForm" ng-submit="ctrl.signIn(user)">
+                <md-input-container class="md-icon-float md-block">
+                    <label>Username</label>
+                    <md-icon class="name">person</md-icon>
+                    <input minlength="3" md-maxlength="20" ng-model="user.username" name="username" type="text" ng-required="true" id="focus-input">
+                    <div class="hint icon" ng-show="!userForm.username.$dirty && !ctrl.login">How should we call you?</div>
+                    <div ng-messages="userForm.username.$error" ng-show="userForm.username.$dirty">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="md-maxlength">That's too long!</div>
+                        <div ng-message="minlength">That's too short!</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block" ng-hide="ctrl.login">
+                    <label>Email</label>
+                    <md-icon class="name">email</md-icon>
+                    <input ng-model="user.email" name="email" type="email" ng-required="true" ng-disabled="ctrl.login" ng-pattern="/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/" />
+                    <div class="hint icon" ng-show="!userForm.email.$dirty && !ctrl.login">How can we reach you?</div>
+                    <div ng-messages="userForm.email.$error" ng-show="userForm.email.$dirty">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="pattern">Your e-mail should look like an actual address ;)</div>
+                    </div>
+                </md-input-container>
+
+                <md-input-container class="md-block">
+                    <label>Password</label>
+                    <md-icon class="name">lock</md-icon>
+                    <input minlength="6" ng-model="user.password" name="password" type="password" ng-required="true" />
+                    <div class="hint icon" ng-show="!userForm.password.$dirty && !ctrl.login">Don't tell anyone ;)</div>
+                    <div ng-messages="userForm.password.$error" ng-show="userForm.password.$dirty">
+                        <div ng-message="required">This is required!</div>
+                        <div ng-message="minlength">That's too short!</div>
+                    </div>
+                </md-input-container>
+
+                <div flex layout="row" layout-align="space-between">
+                    <md-button class="md-accent md-raised" type="submit" ng-disabled="ctrl.loading" ng-switch="ctrl.loading" aria-label="Sign in">
+                        <span ng-switch-when="false">{{ctrl.login ? "Log in" : "Sign up"}}</span>
+                        <div ng-switch-when="true" flex layout="row" layout-align="center">
+                            <md-progress-circular ng-show="ctrl.loading" class="md-accent" md-diameter="20px" md-mode="indeterminate"></md-progress-circular>
+                        </div>
+                    </md-button>
+                    <md-button ng-click="ctrl.toggleMode()" ng-disabled="ctrl.loading">{{ctrl.login ? "Sign up" : "Log in"}} instead</md-button>
+                </div>
+            </form>
+        </md-card-content>
+    </md-card>
+</md-content>
