@@ -1,9 +1,8 @@
 html, body {
   font-family: 'Roboto', sans-serif;
-  font-size:14px;
   height:100%;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
 }
 
 /* Toolbar area */
@@ -13,16 +12,6 @@ html, body {
   border: none;
   margin: 16px;
   min-width: 36px;
-}
-
-
-md-toolbar h3 {
-  margin: auto;
-  font-weight: 500;
-}
-
-#title {
-  text-align: center;
 }
 
 /* Sidenav area */
@@ -99,13 +88,6 @@ md-button.menuBtn > md-icon {
   position: relative;
 }
 
-/* Typography support coming in 0.8.0 */
-
-md-toolbar h1 {
-  font-size: 1.250em;
-  font-weight: 400;
-}
-
 .avatar {
   position: relative;
   width: 128px;
@@ -122,7 +104,6 @@ md-toolbar h1 {
   -moz-transform:scale(0.70);
 }
 
-
 md-bottom-sheet  md-icon {
   margin-right:20px;
 }
@@ -131,4 +112,53 @@ span.name {
   font-weight: bold;
   font-size:1.1em;
   padding-left:5px;
+}
+
+md-sidenav {
+  height: -webkit-fill-available;
+}
+
+#content {
+  height: -webkit-fill-available;
+}
+
+#login-card {
+  max-width: 400px;
+}
+
+.hint {
+  /* Position the hint */
+  position: absolute;
+  left: 2px;
+  right: auto;
+  bottom: 7px;
+  /* Copy styles from ng-messages */
+  font-size: 12px;
+  line-height: 14px;
+  transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+  /* Set our own color */
+  color: grey;
+  z-index: 0;
+}
+
+.hint.icon {
+  left: 36px;
+}
+
+.hint.ng-hide,
+.hint.ng-enter,
+.hint.ng-leave.ng-leave-active {
+  bottom: 26px;
+  opacity: 0;
+}
+
+.hint.ng-leave,
+.hint.ng-enter.ng-enter-active {
+  bottom: 7px;
+  opacity: 1;
+}
+
+md-toast.md-center {
+  left: 50%;
+  transform: translate3d(-50%, 0, 0);
 }

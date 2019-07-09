@@ -3,34 +3,77 @@
 const fs        = require('fs');
 const path      = require('path');
 const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+const AutoIncrement = require('mongoose-auto-increment');
 const Schema = mongoose.Schema;
 
 
 const db        = {};
 
-function omitPrivate(doc, obj) {
-    delete obj.__v;
-    return obj;
+function omitPrivate(model) {
+    const privateFields = ["__v"];
+
+    if (model && model.schema) {
+        Object.keys(model.schema).map((key) => {
+            if (model.schema[key].private) {
+                delete model.schema[key].private;
+                privateFields.push(key);
+            }
+        })
+    }
+
+    return (doc, obj) => {
+        privateFields.forEach((p) => {
+           delete obj[p];
+        });
+        return obj;
+    }
 }
+
+function checkAutoIncrement(model, modelSchema, modelName) {
+    if (!model.schema._id) {
+        modelSchema.plugin(AutoIncrement.plugin, modelName);
+    }
+}
+
+function initSchemaData(model, schema) {
+    if (!model.init || !model.init.length) {
+        return Promise.resolve();
+    }
+
+    return schema.insertMany(model.init, {ordered: false})
+        .catch((e) => {
+            if (e.code !== 11000) {
+                throw e;
+            }
+        });
+}
+
+AutoIncrement.initialize(mongoose.connection);
 
 fs
     .readdirSync(__dirname)
-    .filter(fileName => {
+    .filter((fileName) => {
         return (fileName.endsWith('.model.js'));
     })
-    .forEach(fileName => {
+    .forEach(async (fileName) => {
         const model = require(path.join(__dirname, fileName));
         const modelSchema = new Schema(model.schema, {
             toJSON: {
-                transform: omitPrivate
+                transform: omitPrivate(model)
             }
         });
+        const modelName = fileName.split('.')[0];
 
-        modelSchema.plugin(AutoIncrement, {inc_field: '_id'});
+        checkAutoIncrement(model, modelSchema, modelName);
+        modelSchema.methods = model.methods || {};
 
-        fileName = fileName.split('.')[0];
-        db[fileName] = mongoose.model(fileName, modelSchema);
+        const schema = mongoose.model(modelName, modelSchema);
+        try {
+            await initSchemaData(model, schema);
+        } catch (e) {
+            console.error("Couldn't insert initial values for model '" + modelName + "':", e);
+        }
+        db[modelName] = schema;
     });
 
 module.exports = db;
