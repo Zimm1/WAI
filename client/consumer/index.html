@@ -1,61 +1,62 @@
 <!DOCTYPE html>
 <html lang="en" >
   <head>
-    <title>Angular Material - Starter App</title>
+    <title>WheRE</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
+    <base href="/" />
+
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="../common/lib/angular-material/angular-material.css"/>
-    <link rel="stylesheet" href="./assets/app.css"/>
+    <link rel="stylesheet" href="../common/assets/app.css"/>
+    <link rel="stylesheet" href="../common/lib/leaflet/leaflet.css" />
+
+    <style type="text/css">
+      /**
+       * Hide when Angular is not yet loaded and initialized
+       */
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body ng-app="app" layout="column" ng-cloak>
+    <wai-toolbar title="WheRE"></wai-toolbar>
+    <div ng-view flex></div>
 
     <script src="../common/lib/angular/angular.js"></script>
     <script src="../common/lib/angular/angular-animate.js"></script>
     <script src="../common/lib/angular/angular-aria.js"></script>
-    <script type="text/javascript" src="../common/lib/angular-material/angular-material.js"></script>
+    <script src="../common/lib/angular/angular-route.js"></script>
+    <script src="../common/lib/angular/angular-messages.js"></script>
+    <script src="../common/lib/angular/ngStorage.js"></script>
+    <script src="../common/lib/angular-material/angular-material.js"></script>
 
-    <!-- Leaflet dependency-->
     <script src="../common/lib/leaflet/leaflet.js"></script>
     <script src="../common/lib/leaflet/angular-leaflet-directive.js"></script>
-    <link rel="stylesheet" href="../common/lib/leaflet/leaflet.css" />
 
-    <script src="index.js"></script>
-    <script src="src/map/mapService.js"></script>
-  </head>
+    <script src="app.module.js"></script>
 
-  <body ng-app="consumerApp" ng-controller="mainController">
+    <script src="features/map/map.module.js"></script>
+    <script src="features/map/map.controller.js"></script>
+    <script src="features/map/autocomplete/autocomplete.controller.js"></script>
+    <script src="features/map/map.service.js"></script>
 
-      <div class="firstLevel">
-        <md-toolbar class="md-hue-2">
-          <div class="md-toolbar-tools">
-            <md-button class="md-icon-button" aria-label="Settings">
-              <md-icon md-svg-icon="menu"></md-icon>
-            </md-button>
+    <script src="../common/features/auth/auth.module.js"></script>
+    <script src="../common/features/auth/auth.controller.js"></script>
+    <script src="../common/features/auth/auth.service.js"></script>
 
-            <md-autocomplete
-                    ng-disabled="isDisabled"
-                    md-no-cache="noCache"
-                    md-selected-item-change="itemSelectedChanged(item)"
-                    md-selected-item="selectedItem"
-                    md-search-text="searchText"
-                    md-items="item in getQueryResult(searchText)"
-                    md-item-text="item.display_name"
-                    md-min-length="minLength"
-                    placeholder="Inserisci un indirizzo">
-              <md-item-template>
-              <span md-highlight-text = "searchText"
-                    md-highlight-flags = "^i">{{item.display_name}}</span>
-              </md-item-template>
-              <md-not-found>
-                Nessun luogo corrisponde a "{{searchText}}".
-              </md-not-found>
-            </md-autocomplete>
-          </div>
-        </md-toolbar>
-      </div>
-        <leaflet id="map" class="mapLevel" center="center" maxbounds="mybounds" defaults="defaults" markers="markers"></leaflet>
+    <script src="../common/features/toolbar/toolbar.module.js"></script>
+    <script src="../common/features/toolbar/toolbar.controller.js"></script>
+
+    <script src="../common/features/users/users.module.js"></script>
+    <script src="../common/features/users/users.controller.js"></script>
+    <script src="../common/features/users/users.service.js"></script>
   </body>
 </html>

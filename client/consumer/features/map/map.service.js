@@ -1,8 +1,8 @@
 (function () {
-    angular.module('consumerApp')
-        .service('mapService', ['$http',mapService]);
+    angular.module('map')
+        .service('MapService', MapService);
 
-        function mapService($http){
+        function MapService($http) {
             var baseUri = "https://plus.codes/api";
             var baseUriNominatim = "https://nominatim.openstreetmap.org";
 
