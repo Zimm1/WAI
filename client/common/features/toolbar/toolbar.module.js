@@ -5,9 +5,12 @@
     ])
     .directive('waiToolbar', function() {
         return {
-            templateUrl: '/features/toolbar/toolbar.view.html',
+            templateUrl: '../common/features/toolbar/toolbar.view.html',
             controller: 'ToolbarController',
             controllerAs: 'ctrl',
+            scope: {
+                title: "@"
+            }
         };
     });
 })();

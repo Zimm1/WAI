@@ -1,4 +1,5 @@
 (function() {
+    // Editor
     angular
         .module('app', [
             'ngMaterial',

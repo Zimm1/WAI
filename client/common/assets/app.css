@@ -118,6 +118,10 @@ md-sidenav {
   height: -webkit-fill-available;
 }
 
+#content {
+  height: -webkit-fill-available;
+}
+
 #login-card {
   max-width: 400px;
 }

@@ -52,13 +52,17 @@
 
         const setError = (message) => {
             this.error = message;
+            setFocus();
+        };
+
+        const setFocus = () => {
             angular.element(document.querySelector('#focus-input')).focus();
         };
 
         const stopLoading = () => {
             this.loading = false;
             $scope.$apply();
-        }
+        };
     }
 
 })();

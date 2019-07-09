@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" >
   <head>
-    <title>Angular Material - Starter App</title>
+    <title>WheRE</title>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="../common/lib/angular-material/angular-material.css"/>
-    <link rel="stylesheet" href="/assets/app.css"/>
+    <link rel="stylesheet" href="../common/assets/app.css"/>
 
     <style type="text/css">
         /**
@@ -26,7 +26,7 @@
   </head>
 
   <body ng-app="app" layout="column" ng-cloak>
-    <wai-toolbar></wai-toolbar>
+    <wai-toolbar title="WheRE"></wai-toolbar>
     <div ng-view flex></div>
 
     <script src="../common/lib/angular/angular.js"></script>
@@ -39,15 +39,15 @@
 
     <script src="app.module.js"></script>
 
-    <script src="features/auth/auth.module.js"></script>
-    <script src="features/auth/auth.controller.js"></script>
-    <script src="features/auth/auth.service.js"></script>
+    <script src="../common/features/auth/auth.module.js"></script>
+    <script src="../common/features/auth/auth.controller.js"></script>
+    <script src="../common/features/auth/auth.service.js"></script>
 
-    <script src="features/toolbar/toolbar.module.js"></script>
-    <script src="features/toolbar/toolbar.controller.js"></script>
+    <script src="../common/features/toolbar/toolbar.module.js"></script>
+    <script src="../common/features/toolbar/toolbar.controller.js"></script>
 
-    <script src="features/users/users.module.js"></script>
-    <script src="features/users/users.controller.js"></script>
-    <script src="features/users/users.service.js"></script>
+    <script src="../common/features/users/users.module.js"></script>
+    <script src="../common/features/users/users.controller.js"></script>
+    <script src="../common/features/users/users.service.js"></script>
   </body>
 </html>
