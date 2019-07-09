@@ -1,16 +1,33 @@
 (function (){
 
-    angular.module('consumerApp',['ngMaterial'])
-        .controller('mainController',['$scope' ,'mapService', mainController])
+    angular.module('consumerApp',['ngMaterial','leaflet-directive'])
+        .controller('mainController',['$scope', 'leafletData','mapService', mainController])
         .config(function ($mdIconProvider){
             $mdIconProvider
-                .icon('menu', '../common/assets/svg/menu.svg');
+                .icon('menu', '../common/assets/svg/menu.svg')
+                .icon('pin', '../common/lib/leaflet/images/marker-icon.png');
         });
 
-    function mainController($scope, mapService){
-        var myCoordinate = {
-            'lat': 42.261,
-            'lng': 11.063
+    function mainController($scope, leafletData,mapService){
+        var userCoordinate = {};
+        var userMarker;
+        var initObj = {
+            center: {
+                zoom: 10
+            },
+            defaults: {
+                maxZoom: 18,
+                minZoom: 2,
+                scrollWheelZoom: true,
+                doubleClickZoom: false,
+                zoomControlPosition: 'bottomright'
+            },
+            events: {
+                map: {
+                    enable: ['zoomstart', 'drag', 'click', 'mousemove'],
+                    logic: 'emit'
+                }
+            }
         };
         /*
                        North (+90)
@@ -19,15 +36,77 @@
                            |
                          South (-90)
         * */
-        var southWest = L.latLng(-90, -180),
-            northEast = L.latLng(90, 180);
-        var mybounds = L.latLngBounds(southWest, northEast);
 
-        initPosition();
+        angular.extend($scope, initObj);
+        $scope.mybounds = {'northEast': {'lat': 90, 'lng': 180},'southWest': {'lat': -90, 'lng': -180}};
 
-        var mymap;
-        var posMarker;
+        $scope.centerView = function (){
+            $scope.center.lat = userCoordinate.lat;
+            $scope.center.lng = userCoordinate.lng;
+            $scope.center.zoom = 18;
+        };
 
+        $scope.updatePosition = function() {
+            leafletData.getMap('map').then(function(map) {
+                if(userMarker){
+                    map.removeLayer(userMarker);
+                }
+
+                // Circle
+                var circleLocation = new L.LatLng(userCoordinate.lat, userCoordinate.lng);
+                var circleOptions = {
+                    color: 'blue'
+                };
+                userMarker = new L.Circle(circleLocation, 5, circleOptions);
+                map.addLayer(userMarker);
+            });
+        };
+
+        $scope.getLocation = function() {
+            leafletData.getMap('map').then(function(map) {
+                    map.locate({setView: true, maxZoom: 16, watch: false, enableHighAccuracy: true});
+                    map.on('locationfound', function (e) {
+                        console.log(e.latlng, e.accuracy);
+                        $scope.updateUserPosition(e.latlng.lat, e.latlng.lng);
+                        //map.setView([userCoordinate.lat, userCoordinate.lng],18);
+                        $scope.centerView();
+                        $scope.updatePosition(userCoordinate.lat, userCoordinate.lng);
+                    });
+                }
+            )};
+
+        $scope.updateUserPosition = function (lat,lng){
+            userCoordinate.lat = lat;
+            userCoordinate.lng = lng;
+        };
+
+        $scope.$on('leafletDirectiveMap.map.click', function(event, wrap){
+            userCoordinate = {
+                'lat': wrap.leafletEvent.latlng.lat,
+                'lng': wrap.leafletEvent.latlng.lng
+            };
+            $scope.updatePosition();
+            $scope.centerView();
+        });
+
+        /*angular.extend($scope, {
+            markers: {
+                myFirstMarker: {
+                    lat: 59.91,
+                    lng: 10.75,
+                    message: "I want to travel here!",
+                    focus: true,
+                    draggable: true,
+                    icon: {
+                        iconUrl:       'http://localhost:8000/common/lib/leaflet/images/marker-icon.png',
+                        iconRetinaUrl: 'http://localhost:8000/common/lib/leaflet/images/marker-icon-2x.png',
+                        shadowUrl:     'http://localhost:8000/common/lib/leaflet/images/marker-shadow.png'
+                    }
+                }
+            },
+        });*/
+
+        $scope.getLocation();
         $scope.isDisabled = false;
         $scope.noCache = true;
         $scope.searchText = '';
@@ -54,67 +133,10 @@
 
         $scope.itemSelectedChanged= function (item) {
             console.log('item selected: '+item);
-            myCoordinate['lat'] = item['lat'];
-            myCoordinate['lng'] = item['lon'];
-            updatePosition();
-
+            $scope.updateUserPosition(parseFloat(item['lat']), parseFloat(item['lon']));
+            $scope.updatePosition();
+            $scope.centerView();
+            $scope.center.zoom = 16;
         };
-
-        function initPosition(){
-            mymap = L.map('map',{
-                maxBoundsViscosity: 1.0
-            }).fitWorld();
-            //.setView([myCoordinate['lat'], myCoordinate['lng']],5);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
-                maxZoom: 20,
-                minZoom: 2
-            }).addTo(mymap);
-            mymap.setMaxBounds(mybounds);
-            mymap.doubleClickZoom.disable();
-            mymap.locate({watch:false, setView: true, maxZoom: 18, timeout: 30000,enableHighAccuracy: true});
-            mymap.zoomControl.setPosition('bottomright');
-            mymap.on('click', clickOnMap);
-            mymap.on('locationfound', onLocationFound);
-            mymap.on('locationerror', onLocationError);
-        }
-
-        function onLocationError(e){
-            console.log(`onLocationError: ${e.message}`);
-        }
-
-        function onLocationFound(e){
-            var param = e.latlng;
-            myCoordinate['lat'] = param['lat'];
-            myCoordinate['lng'] = param['lng'];
-            console.log(param);
-            updatePosition();
-        }
-
-        function updatePosition(){
-            if(posMarker){
-                mymap.removeLayer(posMarker);
-            }
-            posMarker = L.circle([myCoordinate['lat'], myCoordinate['lng']], {
-                color: 'red',
-                fillColor: '#f03',
-                fillOpacity: 0.5,
-                radius: 5
-            }).addTo(mymap);
-            mymap.panTo(posMarker.getLatLng());
-            mymap.setZoomAround(posMarker.getLatLng(),18);
-            /*mymap.panTo([myCoordinate['lat'], myCoordinate['lng']]);
-            mymap.setZoomAround([myCoordinate['lat'], myCoordinate['lng']],18);*/
-            /*var latLngs = [myCoordinate['lat'], myCoordinate['lng']];
-            var markerBounds = L.latLngBounds(latLngs);
-            mymap.fitBounds(markerBounds);*/
-            //mymap.setZoom(18);
-        }
-
-        function clickOnMap(e){
-            var param = e.latlng;
-            myCoordinate['lat'] = param['lat'];
-            myCoordinate['lng'] = param['lng'];
-            updatePosition();
-        }
     }
 })();
