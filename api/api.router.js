@@ -3,12 +3,13 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 
 const authRouter = require('./routes/auth.route');
+const poiRouter = require('./routes/poi.route');
 const userRouter = require('./routes/user.route');
 const itemRouter = require('./routes/item.route');
 
+const authUtils = require('./utils/authUtils');
 const expressUtils = require("./utils/expressUtils");
 const passportUtils = require("./utils/passportUtils");
-const authUtils = require('./utils/authUtils');
 
 
 router.use(bodyParser.json());
@@ -20,6 +21,7 @@ router.use(authUtils.authInit);
 
 
 router.use('/auth', authRouter);
+router.use('/poi',  poiRouter );
 router.use('/user', userRouter);
 router.use('/item', itemRouter);
 

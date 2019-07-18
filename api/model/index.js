@@ -35,6 +35,16 @@ function checkAutoIncrement(model, modelSchema, modelName) {
     }
 }
 
+function addIndexesToSchema(model, schema) {
+    if (!model.indexes) {
+        return;
+    }
+
+    model.indexes.forEach((index) => {
+        schema.index(index);
+    });
+}
+
 function initSchemaData(model, schema) {
     if (!model.init || !model.init.length) {
         return Promise.resolve();
@@ -67,12 +77,16 @@ fs
         checkAutoIncrement(model, modelSchema, modelName);
         modelSchema.methods = model.methods || {};
 
+        addIndexesToSchema(model, modelSchema);
+
         const schema = mongoose.model(modelName, modelSchema);
+
         try {
             await initSchemaData(model, schema);
         } catch (e) {
             console.error("Couldn't insert initial values for model '" + modelName + "':", e);
         }
+
         db[modelName] = schema;
     });
 

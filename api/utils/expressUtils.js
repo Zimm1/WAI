@@ -1,4 +1,4 @@
-const {validationResult} = require('express-validator/check');
+const {validationResult} = require('express-validator');
 
 const ERROR_CODES = {
     400: "Bad Request",
@@ -16,7 +16,7 @@ function sendError(res, code, message) {
     });
 }
 
-function validationErrors(req, res, next) {
+function checkValidation(req, res, next) {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -29,5 +29,5 @@ function validationErrors(req, res, next) {
 
 module.exports = {
     sendError,
-    validationErrors
+    checkValidation
 };
