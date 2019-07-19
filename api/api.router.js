@@ -9,6 +9,7 @@ const itemRouter = require('./routes/item.route');
 
 const authUtils = require('./utils/authUtils');
 const expressUtils = require("./utils/expressUtils");
+const logUtils = require("./utils/logUtils");
 const passportUtils = require("./utils/passportUtils");
 
 
@@ -16,6 +17,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({
     extended: true
 }));
+router.use(logUtils.httpLogger);
 router.use(passportUtils.initPassport());
 router.use(authUtils.authInit);
 
