@@ -1,14 +1,12 @@
 <md-toolbar>
     <div layout="row">
-        <div class="md-toolbar-tools" flex layout="row" layout-align="space-between" style="padding: 0">
+        <div class="md-toolbar-tools" flex layout="row" layout-align="space-between center" style="padding: 0">
             <a ng-href=" " layout="column" layout-align="center">
                 <h1 style="margin: 20px">{{title}}</h1>
             </a>
-            <div layout="row" layout-align="center center">
-                <md-button class="md-raised" ng-click="ctrl.signInClick()" style="margin: 14px">
-                    {{ctrl.getCurrentUser() ? "Log out" : "Sign in"}}
-                </md-button>
-            </div>
+            <md-button class="md-raised" ng-click="ctrl.signInClick()" style="margin: 14px">
+                {{ctrl.getCurrentUser() ? "Log out" : "Sign in"}}
+            </md-button>
         </div>
     </div>
 </md-toolbar>

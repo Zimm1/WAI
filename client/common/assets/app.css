@@ -40,6 +40,7 @@ md-list-item > button {
   padding-left: 40px;
   padding-right: 40px;
   padding-top: 5px;
+  height: -webkit-fill-available;
 }
 
 #content .md-button.share {
@@ -114,12 +115,8 @@ span.name {
   padding-left:5px;
 }
 
-md-sidenav {
-  height: -webkit-fill-available;
-}
-
-#content {
-  height: -webkit-fill-available;
+.fill {
+  height: 100% !important;
 }
 
 #login-card {
@@ -161,4 +158,8 @@ md-sidenav {
 md-toast.md-center {
   left: 50%;
   transform: translate3d(-50%, 0, 0);
+}
+
+md-virtual-repeat-container {
+  z-index: 1000 !important;
 }

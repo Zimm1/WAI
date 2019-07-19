@@ -4,6 +4,7 @@
             'ngMaterial',
             'ngRoute',
             'auth',
+            'map',
             'toolbar',
             'users'
         ])
@@ -27,7 +28,7 @@
         .config(($routeProvider, $locationProvider) => {
             $routeProvider
                 .when("/", {
-                    templateUrl : "../common/features/users/view/users.view.html"
+                    templateUrl : "features/map/map.view.html"
                 })
                 .when("/signin", {
                     templateUrl : "../common/features/auth/auth.view.html"
@@ -37,10 +38,5 @@
                 });
 
             $locationProvider.html5Mode(true);
-        })
-        .run(function ($rootScope) {
-            $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                console.log('$routeChangeStart: ' + (current ? current.originalPath : 'undefined') + ' to ' + next.originalPath);
-            });
         });
 })();

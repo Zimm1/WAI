@@ -3,7 +3,7 @@
         'ngMaterial',
         'auth'
     ])
-    .directive('waiToolbar', function() {
+    .directive('waiToolbar', () => {
         return {
             templateUrl: '../common/features/toolbar/toolbar.view.html',
             controller: 'ToolbarController',

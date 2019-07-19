@@ -1,8 +1,6 @@
-const config = require('config');
-
 const model = require("../model");
+const authUtils = require("../utils/authUtils");
 const expressUtils = require("../utils/expressUtils");
-const ROLES = config.get("AUTH.ROLES");
 
 
 function getAll(req, res, next) {
@@ -24,7 +22,7 @@ function get(req, res, next) {
         return;
     }
 
-    if (req.user.role !== ROLES.ADMIN._id && parseInt(req.params.id) !== req.user._id) {
+    if (req.user.role !== authUtils.getRoles().ADMIN._id && parseInt(req.params.id) !== req.user._id) {
         expressUtils.sendError(res, 401, "User id not authorized");
         return;
     }

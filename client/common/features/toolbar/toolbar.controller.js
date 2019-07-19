@@ -2,7 +2,7 @@
     angular.module('toolbar')
         .controller('ToolbarController', ToolbarController);
 
-    function ToolbarController($scope, $rootScope, $location, AuthService) {
+    function ToolbarController($rootScope, $location, AuthService) {
         this.menuClick = () => {
             $rootScope.$broadcast('toolbar.menuClick');
         };

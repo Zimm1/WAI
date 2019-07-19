@@ -1,4 +1,9 @@
 {
+  "API": {
+    "PAGINATION": {
+      "LIMIT": 20
+    }
+  },
   "AUTH": {
     "TOKEN_EXPIRE_SECONDS": 86400,
     "JWT_SECRET": ":!5NC+hT2~P6q,U%",

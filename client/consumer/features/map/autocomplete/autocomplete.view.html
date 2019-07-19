@@ -1,0 +1,17 @@
+<md-autocomplete style="position: absolute !important; width: 400px; z-index: 1000 !important; margin: 10px"
+    ng-disabled="ctrl.isDisabled"
+    md-no-cache="ctrl.noCache"
+    md-selected-item-change="ctrl.itemSelectedChanged(item)"
+    md-selected-item="ctrl.selectedItem"
+    md-search-text="ctrl.searchText"
+    md-items="item in ctrl.getQueryResult(ctrl.searchText)"
+    md-item-text="item.display_name"
+    md-min-length="ctrl.minLength"
+    placeholder="Inserisci un indirizzo">
+  <md-item-template>
+    <span md-highlight-text = "ctrl.searchText" md-highlight-flags = "^i">{{item.display_name}}</span>
+  </md-item-template>
+  <md-not-found>
+    Nessun luogo corrisponde a "{{ctrl.searchText}}".
+  </md-not-found>
+</md-autocomplete>

@@ -1,22 +1,20 @@
 const passport = require('passport');
-const config = require('config');
-const {check} = require('express-validator/check');
+const {body} = require('express-validator');
 
 const model = require("../model");
 const expressUtils = require("../utils/expressUtils");
 const authUtils = require("../utils/authUtils");
 const mongoUtils = require("../utils/mongoUtils");
-const ROLES = config.get("AUTH.ROLES");
 
 
 const signup = [
-    check('username', 'Username must be between 3 and 20 characters long').not().isEmpty().isLength({min: 3, max: 20}),
-    check('email', 'Email is not valid').not().isEmpty().isEmail().normalizeEmail(),
-    check('password', 'Password must be at least 6 characters long').not().isEmpty().isLength({min: 6}),
-    check('role', 'Role must be valid').optional().isInt().isIn(authUtils.getRoleIds()),
-    expressUtils.validationErrors,
+    body('username', 'Username must be between 3 and 20 characters long').not().isEmpty().isLength({min: 3, max: 20}),
+    body('email', 'Email is not valid').not().isEmpty().isEmail().normalizeEmail(),
+    body('password', 'Password must be at least 6 characters long').not().isEmpty().isLength({min: 6}),
+    body('role', 'Role must be valid').optional().isInt().isIn(authUtils.getRoleIds()),
+    expressUtils.checkValidation,
     (req, res, next) => {
-        if (req.body.role === ROLES.ADMIN._id) {
+        if (req.body.role === authUtils.getRoles().ADMIN._id) {
             expressUtils.sendError(res, 422, "Can't sign up as admin");
             return;
         }
@@ -46,9 +44,9 @@ const signup = [
 ];
 
 const login = [
-    check('username', 'Username must be between 3 and 20 characters long').not().isEmpty().isLength({min: 3, max: 20}),
-    check('password', 'Password must be at least 6 characters long').not().isEmpty().isLength({min: 6}),
-    expressUtils.validationErrors,
+    body('username', 'Username must be between 3 and 20 characters long').not().isEmpty().isLength({min: 3, max: 20}),
+    body('password', 'Password must be at least 6 characters long').not().isEmpty().isLength({min: 6}),
+    expressUtils.checkValidation,
     (req, res, next) => {
         passport.authenticate('local', (err, user, info) => {
             if (err) {
