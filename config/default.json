@@ -1,5 +1,19 @@
 {
   "API": {
+    "CLIP": {
+      "PURPOSE": [
+        "what", "how", "why"
+      ],
+      "CONTENT": [
+        "none", "nat", "art", "his", "flk", "mod", "rel", "cul", "spo", "mus", "mov", "fas", "shp", "tec", "pop", "prs", "oth"
+      ],
+      "AUDIENCE": [
+        "gen", "pre", "elm", "mid", "scl"
+      ],
+      "DETAIL": {
+        "MAX": 3
+      }
+    },
     "PAGINATION": {
       "LIMIT": 20
     }

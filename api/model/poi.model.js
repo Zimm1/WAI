@@ -14,6 +14,10 @@ module.exports = {
             type: Number,
             ref: 'poi_category'
         }],
+        clips: [{
+            type: Number,
+            ref: 'clip'
+        }]
     },
     indexes: [
         {
