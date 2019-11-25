@@ -163,3 +163,24 @@ md-toast.md-center {
 md-virtual-repeat-container {
   z-index: 1000 !important;
 }
+
+.leaflet-control-container .leaflet-routing-container-hide {
+  display: none;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius:0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+
+.popupStyle img {
+    vertical-align: top;
+}
+
+.popupStyle span {
+    padding: 0 0.7em 0 0.7em;
+    font-size: 1.4em;
+}
