@@ -5,7 +5,7 @@
     function MapController($scope, leafletData, MapService) {
         const map = leafletData.getMap('map');
 
-        let vehicle = {
+        const vehicle = {
             WALKING: 0,
             DRIVING: 1,
             CYCLING: 2,
@@ -112,7 +112,7 @@
                 });
 
                 map.addLayer(userMarker);
-                getPoiUserPosition(lat, lng).then(function (data){
+                getPoiUserPosition(lat, lng,0,10).then(function (data){
                     showPOI(data);
                 });
             });
@@ -148,8 +148,8 @@
             });
         };
 
-        const getPoiUserPosition = function (lat,lng) {
-            return MapService.getPoiUserPosition(lat, lng).then(function (data) {
+        const getPoiUserPosition = function (lat, lng, page, limit) {
+            return MapService.getPoiUserPosition(lat, lng, page, limit).then(function (data) {
                 console.log(data);
                 return data['data']['data'];
             }).catch(function (error){
@@ -220,8 +220,9 @@
             myRoute.hide();
         };
 
-        const createAwesomeIcon = (poi) => {
-            return L.AwesomeMarkers.icon(poi['categories'][0]['icon'])
+        const createAwesomeIcon = (listCat) => {
+            let item = listCat[0];
+            return L.AwesomeMarkers.icon(item.icon)
         };
 
         const showPOI = (listPOI) => {
@@ -233,7 +234,7 @@
                 L.AwesomeMarkers.Icon.prototype.options.prefix = 'fa';
                 for(let i = 0; i < listPOI.length; i++){
                     let item = listPOI[i];
-                    let marker = L.marker([item.location.lat, item.location.lng], {icon: createAwesomeIcon(item)});
+                    let marker = L.marker([item.location.lat, item.location.lng], {icon: createAwesomeIcon(item['categories'])});
                     getPageImages(item.name, 100).then(function (data){
                         angular.forEach(data['data']['query']['pages'], function (value, key){
                             let myLink = value['thumbnail']['source'];

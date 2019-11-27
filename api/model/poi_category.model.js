@@ -4,6 +4,18 @@ module.exports = {
             type: String,
             required: true
         },
+        icon: {
+            icon: {
+                type: String,
+                required: true,
+                lowercase: true
+            },
+            markerColor: {
+                type: String,
+                required: true,
+                lowercase: true
+            }
+        },
         pois: [{
             type: Number,
             ref: 'poi'
@@ -12,11 +24,19 @@ module.exports = {
     init: [
         {
             _id: 0,
-            name: 'A'
+            name: 'storia',
+            icon: {
+                icon: 'monument',
+                markerColor: 'orange'
+            }
         },
         {
             _id: 1,
-            name: 'B'
+            name: 'sport',
+            icon: {
+                icon: 'futbol',
+                markerColor: 'green'
+            }
         }
     ]
 

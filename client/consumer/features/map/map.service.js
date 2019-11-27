@@ -4,76 +4,14 @@
 
         function MapService($http) {
 
-            let fakeData = [{
-                "categories": [{
-                        "_id": 0,
-                        "name": "A",
-                    "icon": {
-                        "icon": "monument",
-                        "markerColor": "orange"
-                    }
-                    }],
-                "_id": 26,
-                "name": "Porta San Donato, Bologna",
-                "location": {
-                    "lat": 44.498459,
-                    "lng": 11.356230
-                }
-            },{
-                "categories": [{
-                    "_id": 0,
-                    "name": "B",
-                    "icon": {
-                        "icon": "monument",
-                        "markerColor": "orange"
-                    }
-                }],
-                "_id": 27,
-                "name": "Piazza San Marco",
-                "location": {
-                    "lat": 45.433889,
-                    "lng": 12.338056
-                }
-            },{
-                "categories": [{
-                    "_id": 0,
-                    "name": "B",
-                    "icon": {
-                        "icon": "futbol",
-                        "markerColor": "green"
-                    }
-                }],
-                "_id": 28,
-                "name": "Mapei Stadium – Città del Tricolore",
-                "location": {
-                    "lat": 44.714722,
-                    "lng": 10.649722
-                }
-            },{
-                "categories": [{
-                    "_id": 0,
-                    "name": "B",
-                    "icon": {
-                        "icon": "brush",
-                        "markerColor": "purple"
-                    }
-                }],
-                "_id": 29,
-                "name": "Colosseum",
-                "location": {
-                    "lat": 41.8902,
-                    "lng": 12.4924
-                }
-            }];
-
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
             const wikipediaBaseUri = "https://en.wikipedia.org";
             const poiUri = "http://localhost:8000/api/poi";
 
-            this.getPoiUserPosition = function (lat, lng){
+            this.getPoiUserPosition = function (lat, lng, page, limit){
                 return new Promise(function (resolve, reject){
                     $http({
-                        url: `${poiUri}?lat=${lat}&lng=${lng}`,
+                        url: `${poiUri}?lat=${lat}&lng=${lng}&page=${page}&limit=${limit}`,
                         method: 'GET'
                     }).then(function successCallback(response){
                         resolve(response);

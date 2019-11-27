@@ -10,11 +10,11 @@ const PAGINATION_LIMIT = require('config').get("API.PAGINATION.LIMIT");
 const getAll = [
     query('page', 'Page must be a positive number').optional().isInt({min: 0}),
     query('limit', 'Page must be a number between 1 and ' + PAGINATION_LIMIT).optional().isInt({min: 1, max: PAGINATION_LIMIT}),
-    query('lat', 'Latitude must be valid').optional().isDecimal({decimal_digits: '0,6'}).custom(
+    query('lat', 'Latitude must be valid').optional().isDecimal({decimal_digits: '0,9'}).custom(
         (value) =>
             value >= -90 && value <= 90
     ),
-    query('lng', 'Longitude must be valid').optional().isDecimal({decimal_digits: '0,6'}).custom(
+    query('lng', 'Longitude must be valid').optional().isDecimal({decimal_digits: '0,9'}).custom(
         (value) =>
             value >= -180 && value <= 180
     ),
@@ -42,7 +42,7 @@ const getAll = [
 
         query.skip(pagination.page * pagination.limit)
             .limit(pagination.limit)
-            .populate({path:'categories', select: 'name'})
+            .populate({path: 'categories', select: 'name icon'})
             .then((pois) => {
                 res.status(200).json({
                     success: true,
@@ -70,7 +70,7 @@ const get = (req, res, next) => {
         return;
     }
 
-    model.poi.findById(req.params.id).populate({path:'categories', select: 'name'}).then((poi) => {
+    model.poi.findById(req.params.id).populate({path:'categories', select: 'name icon'}).then((poi) => {
         if (!poi) {
             expressUtils.sendError(res, 404);
             return;
@@ -122,7 +122,7 @@ const post = [
                     c.pois.push(poi._id);
                     return c.save();
                 })).then(() => {
-                    poi.populate({path:'categories', select: 'name'}).execPopulate().then((poi) => {
+                    poi.populate({path: 'categories', select: 'name icon'}).execPopulate().then((poi) => {
                         res.status(201).send({
                             success: true,
                             data: poi
