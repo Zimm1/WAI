@@ -8,13 +8,112 @@
 	},
 	"item": [
 		{
-			"name": "Item",
+			"name": "Auth",
 			"description": "",
 			"item": [
 				{
-					"name": "WAI - Item - Get all",
+					"name": "WAI - Auth - Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"token\", \"Bearer \" + jsonData.token);",
+									"}",
+									""
+								]
+							}
+						}
+					],
 					"request": {
-						"url": "{{host}}/api/item",
+						"url": "{{host}}/api/auth/signup",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"ddd\",\n\t\"email\": \"d@d.dd\",\n\t\"password\": \"123456\",\n\t\"role\": 2\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Auth - Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"token\", \"Bearer \" + jsonData.token);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"url": "{{host}}/api/auth/login",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"adminadmin\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "POI",
+			"description": "",
+			"item": [
+				{
+					"name": "WAI - POI - Get all",
+					"request": {
+						"url": {
+							"raw": "{{host}}/api/poi?page=0&limit=20&lat=10.2&lng=-10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"poi"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "lat",
+									"value": "10.2",
+									"equals": true,
+									"description": ""
+								},
+								{
+									"key": "lng",
+									"value": "-10",
+									"equals": true,
+									"description": ""
+								}
+							],
+							"variable": []
+						},
 						"method": "GET",
 						"header": [],
 						"body": {},
@@ -23,11 +122,116 @@
 					"response": []
 				},
 				{
-					"name": "WAI - Item - Get",
+					"name": "WAI - POI - Get",
 					"request": {
-						"url": "{{host}}/api/item/3",
+						"url": "{{host}}/api/poi/1",
 						"method": "GET",
 						"header": [],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - POI - Add",
+					"request": {
+						"url": "{{host}}/api/poi",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"EEE\",\n\t\"lat\": 10.123456,\n\t\"lng\": -10.123456,\n\t\"categories\": [\n\t\t0,1\n\t]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"description": "",
+			"item": [
+				{
+					"name": "WAI - User - Get all",
+					"request": {
+						"url": "{{host}}/api/user",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - User - Get",
+					"request": {
+						"url": "{{host}}/api/user/11",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Item",
+			"description": "",
+			"item": [
+				{
+					"name": "WAI - Item - Get all",
+					"request": {
+						"url": "{{host}}/api/item",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Item - Get",
+					"request": {
+						"url": "{{host}}/api/item/1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"description": ""
+							}
+						],
 						"body": {},
 						"description": ""
 					},
@@ -38,13 +242,7 @@
 					"request": {
 						"url": "{{host}}/api/item",
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Item1\"\n}"
@@ -58,13 +256,7 @@
 					"request": {
 						"url": "{{host}}/api/item/3",
 						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"name\": \"Oggetto\"\n}"
