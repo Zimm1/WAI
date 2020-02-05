@@ -1,0 +1,21 @@
+<md-sidenav class="md-sidenav-left"
+            md-component-id="detailSidenav"
+            md-disable-backdrop=""
+            md-whiteframe="dtlCtrl.whiteframe">
+
+    <md-content layout-margin="">
+        <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}">
+        <h1>{{dtlCtrl.title}}</h1>
+        <p>{{dtlCtrl.text}}</p>
+        <md-button ng-click="dtlCtrl.nextPoi()" class="md-accent">
+            Next POI
+        </md-button>
+        <md-button ng-click="dtlCtrl.closeSidenav()" class="md-accent">
+            Close
+        </md-button>
+        <md-button ng-click="dtlCtrl.previousPoi()" class="md-accent">
+            Previous POI
+        </md-button>
+    </md-content>
+
+</md-sidenav>

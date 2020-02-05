@@ -2,7 +2,7 @@
     angular.module('map')
         .controller('MapController', MapController);
 
-    function MapController($scope, leafletData, MapService) {
+    function MapController($scope, $rootScope, leafletData, MapService, PoiService) {
         const map = leafletData.getMap('map');
 
         const vehicle = {
@@ -45,7 +45,15 @@
         this.mybounds = {'northEast': {'lat': 90, 'lng': 180},'southWest': {'lat': -90, 'lng': -180}};
 
         $scope.$on('leafletDirectiveMap.map.dblclick', (event, wrap) => {
-            updateUserPosition(wrap.leafletEvent.latlng.lat, wrap.leafletEvent.latlng.lng);
+            let latLng = new L.latLng(wrap.leafletEvent.latlng.lat, wrap.leafletEvent.latlng.lng);
+            updateUserPosition(latLng.lat, latLng.lng);
+            if(!myRoute){
+                return;
+            }
+            let myWaypoints = myRoute.getWaypoints();
+            if(myWaypoints[1].latLng){
+                updateRoute(latLng, null, vehicle.CYCLING);
+            }
         });
 
         $scope.$on('wai.map.autocomplete.selected', (event, item) => {
@@ -56,14 +64,21 @@
             updateRoute(userMarker.getLatLng(), destinationCoord);
         });
 
+        $scope.$on('wai.poiservice.showpoi', (event, item) => {
+            showPOI(JSON.parse(item));
+        });
+
         const getLocation = () => {
             map.then((map) => {
                 map
-                    .locate({setView: true, enableHighAccuracy: true})
+                    .locate({setView: true, enableHighAccuracy: false})
                     .on('locationfound', (e) => {
                         updateUserPosition(e.latlng.lat, e.latlng.lng);
                         map.invalidateSize();
-                    });
+                    })
+                    .on('locationerror', (e) => {
+                        console.log(e);
+                    })
             });
         };
 
@@ -108,13 +123,12 @@
                     if(myWaypoints[1].latLng){
                         updateRoute(userMarker.getLatLng(), null, vehicle.CYCLING);
                     }
-                    map.invalidateSize();
                 });
 
                 map.addLayer(userMarker);
-                getPoiUserPosition(lat, lng,0,10).then(function (data){
-                    showPOI(data);
-                });
+                if(PoiService.index === -1){
+                    PoiService.update(lat, lng, 0, 10);
+                }
             });
         };
 
@@ -126,36 +140,6 @@
                 console.log(error);
                 return[];
             });
-        };
-
-        const getLangLinks = function (pageTitle, linkLimits, lang, pageContinue) {
-            return MapService.getLangLinks(pageTitle, linkLimits,lang, pageContinue).then(function (data) {
-                console.log(data);
-                return data;
-            }).catch(function (error) {
-                console.log(error);
-                return[];
-            });
-        };
-
-        const getPageText = function (lang, pageTitle, numSentences) {
-            return MapService.getPageText(lang, pageTitle, numSentences).then(function (data) {
-                console.log(data);
-                return data;
-            }).catch( function (error) {
-                console.log(error);
-                return [];
-            });
-        };
-
-        const getPoiUserPosition = function (lat, lng, page, limit) {
-            return MapService.getPoiUserPosition(lat, lng, page, limit).then(function (data) {
-                console.log(data);
-                return data['data']['data'];
-            }).catch(function (error){
-                console.log(error);
-                return [];
-            })
         };
 
         const initRoute = (mode) => {
@@ -235,6 +219,9 @@
                 for(let i = 0; i < listPOI.length; i++){
                     let item = listPOI[i];
                     let marker = L.marker([item.location.lat, item.location.lng], {icon: createAwesomeIcon(item['categories'])});
+
+                    marker.poiIndex = i;
+
                     getPageImages(item.name, 100).then(function (data){
                         angular.forEach(data['data']['query']['pages'], function (value, key){
                             let myLink = value['thumbnail']['source'];
@@ -262,6 +249,11 @@
 
                     marker.on('mouseout', function (e){
                         this.closePopup();
+                    });
+
+                    marker.on('click', function (e) {
+                        $rootScope.$broadcast('wai.detail.toggle', this.poiIndex);
+                        PoiService.setIndex(this.poiIndex);
                     });
 
                     map.addLayer(marker);

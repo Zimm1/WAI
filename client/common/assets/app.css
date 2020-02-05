@@ -5,6 +5,11 @@ html, body {
   padding: 0;
 }
 
+html, body, #map {
+  height: 100%;
+  width: 100vw;
+}
+
 /* Toolbar area */
 
 .menu {
@@ -183,4 +188,14 @@ md-virtual-repeat-container {
 .popupStyle span {
     padding: 0 0.7em 0 0.7em;
     font-size: 1.4em;
+}
+
+/* sidenav*/
+md-sidenav {
+  z-index: 1000 !important;
+}
+
+md-sidenav img {
+  margin: 0px !important;
+  width: 100%;
 }
