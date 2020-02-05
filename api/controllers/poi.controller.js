@@ -18,12 +18,12 @@ const getAll = [
         (value) =>
             value >= -180 && value <= 180
     ),
-    query('lat', 'lng').optional(),
+    query('clips', 'Clips must be bool').optional().isBoolean(),
     expressUtils.checkValidation,
     (req, res, next) => {
         const locationMode = !isNaN(req.query.lat) + !isNaN(req.query.lng);
         if (locationMode === 1) {
-            expressUtils.sendError(res, 422, "Latitude and longitude both must be set");
+            expressUtils.sendError(res, 422, "Latitude and longitude must be set both");
             return;
         }
 
@@ -32,12 +32,18 @@ const getAll = [
             limit: parseInt(req.query.limit) || PAGINATION_LIMIT
         };
 
+        const includeClips = req.body.clips == null ? true : req.body.clips;
+
         const query = model.poi.find();
 
         if (locationMode === 2) {
             query.where('location').near({
                 center: mongoUtils.getLocationFromLatLng(req.query.lat, req.query.lng)
             });
+        }
+
+        if (includeClips) {
+            query.populate({path: 'clips', select: 'audio purpose language content audience detail'});
         }
 
         query.skip(pagination.page * pagination.limit)
@@ -87,7 +93,7 @@ const get = (req, res, next) => {
 };
 
 const post = [
-    authUtils.auth().role(authUtils.getRoles().ADMIN).check(),
+    new authUtils.auth().role(authUtils.getRoles().ADMIN).check(),
     body('name', 'Name must be at least 3 characters long').not().isEmpty().isLength({min: 3}),
     body('lat', 'Latitude must be valid').not().isEmpty().isDecimal({decimal_digits: '0,6'}).custom(
         (value) =>

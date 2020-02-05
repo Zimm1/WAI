@@ -19,5 +19,13 @@ module.exports = {
         {
             location: '2dsphere'
         }
-    ]
+    ],
+    virtuals: {
+        clips: {
+            ref: 'clip',
+            localField: '_id',
+            foreignField: 'poi',
+            justOne: false
+        }
+    }
 };
