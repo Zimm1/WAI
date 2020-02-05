@@ -32,8 +32,6 @@ const getAll = [
             limit: parseInt(req.query.limit) || PAGINATION_LIMIT
         };
 
-        const includeClips = req.body.clips == null ? true : req.body.clips;
-
         const query = model.poi.find();
 
         if (locationMode === 2) {
@@ -42,6 +40,7 @@ const getAll = [
             });
         }
 
+        const includeClips = req.query.clips == null ? true : (req.query.clips === 'true');
         if (includeClips) {
             query.populate({path: 'clips', select: 'audio purpose language content audience detail'});
         }
@@ -70,27 +69,38 @@ const getAll = [
     }
 ];
 
-const get = (req, res, next) => {
-    if (req.params.id == null) {
-        expressUtils.sendError(res, 400);
-        return;
-    }
-
-    model.poi.findById(req.params.id).populate({path:'categories', select: 'name icon'}).then((poi) => {
-        if (!poi) {
-            expressUtils.sendError(res, 404);
+const get = [
+    query('clips', 'Clips must be bool').optional().isBoolean(),
+    expressUtils.checkValidation,
+    (req, res, next) => {
+        if (req.params.id == null) {
+            expressUtils.sendError(res, 400);
             return;
         }
 
-        res.status(200).json({
-            success: true,
-            data: poi
+        const query = model.poi.findById(req.params.id);
+
+        const includeClips = req.query.clips == null ? true : (req.query.clips === 'true');
+        if (includeClips) {
+            query.populate({path: 'clips', select: 'audio purpose language content audience detail'});
+        }
+
+        query.populate({path:'categories', select: 'name icon'}).then((poi) => {
+            if (!poi) {
+                expressUtils.sendError(res, 404);
+                return;
+            }
+
+            res.status(200).json({
+                success: true,
+                data: poi
+            });
+        }).catch((e) => {
+            console.error(e);
+            expressUtils.sendError(res, 500, e.message);
         });
-    }).catch((e) => {
-        console.error(e);
-        expressUtils.sendError(res, 500, e.message);
-    });
-};
+    }
+];
 
 const post = [
     new authUtils.auth().role(authUtils.getRoles().ADMIN).check(),

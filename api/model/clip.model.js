@@ -33,7 +33,7 @@ module.exports = {
             required: true,
         },
         detail: {
-            type: String,
+            type: Number,
             required: true,
         }
     }

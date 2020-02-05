@@ -7,6 +7,7 @@ const expressUtils = require("../utils/expressUtils");
 const authUtils = require("../utils/authUtils");
 const mongoUtils = require("../utils/mongoUtils");
 const PAGINATION_LIMIT = require('config').get("API.PAGINATION.LIMIT");
+const CLIP_CONFIG = require('config').get("API.CLIP");
 
 
 const getAll = [
@@ -89,12 +90,17 @@ const post = [
         .role(authUtils.getRoles().ADMIN)
         .check(),
     upload.single('audio'),
-    body('poi', 'Poi id must be valid').optional().isInt(),
-    body('purpose', 'Purpose required').not().isEmpty().isString(),
-    body('language', 'Language required').not().isEmpty().isString(),
-    body('content', 'Content required').not().isEmpty().isString(),
-    body('audience', 'Audience required').not().isEmpty().isString(),
-    body('detail', 'Detail required').not().isEmpty().isString(),
+    body('poi', 'Poi id must be valid').optional().isInt({min: 0}),
+    body('purpose', 'Purpose must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.PURPOSE.includes(value)),
+    body('language', 'Language must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.LANGUAGE.includes(value)),
+    body('content', 'Content must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.CONTENT.includes(value)),
+    body('audience', 'Audience must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.AUDIENCE.includes(value)),
+    body('detail', 'Detail must be valid').optional()
+        .isInt({min: 0, max: CLIP_CONFIG.DETAIL.MAX}),
     expressUtils.checkValidation,
     async (req, res, next) => {
         // req.audio
@@ -136,12 +142,17 @@ const put = [
         .role(authUtils.getRoles().ADMIN)
         .check(),
     upload.single('audio'),
-    body('poi', 'Poi id must be valid').optional().isInt(),
-    body('purpose', 'Purpose must be string').optional().isString(),
-    body('language', 'Language must be string').optional().isString(),
-    body('content', 'Content must be string').optional().isString(),
-    body('audience', 'Audience must be string').optional().isString(),
-    body('detail', 'Detail must be string').optional().isString(),
+    body('poi', 'Poi id must be valid').optional().isInt({min: 0}),
+    body('purpose', 'Purpose must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.PURPOSE.includes(value)),
+    body('language', 'Language must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.LANGUAGE.includes(value)),
+    body('content', 'Content must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.CONTENT.includes(value)),
+    body('audience', 'Audience must be valid').optional().isString().custom(value =>
+        CLIP_CONFIG.AUDIENCE.includes(value)),
+    body('detail', 'Detail must be valid').optional()
+        .isInt({min: 0, max: CLIP_CONFIG.DETAIL.MAX}),
     expressUtils.checkValidation,
     (req, res, next) => {
         if (req.params.id == null) {
