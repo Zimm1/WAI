@@ -6,7 +6,6 @@ const authRouter = require('./routes/auth.route');
 const poiRouter = require('./routes/poi.route');
 const clipRouter = require('./routes/clip.route');
 const userRouter = require('./routes/user.route');
-const itemRouter = require('./routes/item.route');
 
 const authUtils = require('./utils/authUtils');
 const expressUtils = require("./utils/expressUtils");
@@ -27,7 +26,6 @@ router.use('/auth', authRouter);
 router.use('/poi',  poiRouter );
 router.use('/clip', clipRouter);
 router.use('/user', userRouter);
-router.use('/item', itemRouter);
 
 router.get('/', ((req, res, next) => {
     res.status(200).json({
