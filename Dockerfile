@@ -1,5 +1,8 @@
 FROM node:10-alpine
 
+# Install ffmpeg
+RUN apk add --no-cache ffmpeg
+
 # Create app directory
 RUN mkdir -p /home/node/wai
 WORKDIR /home/node/wai

@@ -1,13 +1,30 @@
 const {body, query} = require('express-validator');
-const upload = require('multer')({ dest: 'uploads/' });
-const mongoose = require('mongoose');
+const multer = require('multer');
 
 const model = require("../model");
 const expressUtils = require("../utils/expressUtils");
 const authUtils = require("../utils/authUtils");
 const mongoUtils = require("../utils/mongoUtils");
+const YoutubeUploader = require("../utils/youtubeUtils").getInstance();
 const PAGINATION_LIMIT = require('config').get("API.PAGINATION.LIMIT");
 const CLIP_CONFIG = require('config').get("API.CLIP");
+const RESOURCES_PATH = require('config').get("API.RESOURCES_PATH");
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, RESOURCES_PATH);
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '.mp3');
+    }
+});
+const upload = multer({
+    storage: storage,
+    fileFilter: (req, file, cb) => {
+        const accepted = file.originalname.split('.').slice(-1)[0] === 'mp3';
+        cb(accepted ? null : new Error('Audio must be a mp3 file'), accepted);
+    }
+});
 
 
 const getAll = [
@@ -103,23 +120,21 @@ const post = [
         .isInt({min: 0, max: CLIP_CONFIG.DETAIL.MAX}),
     expressUtils.checkValidation,
     async (req, res, next) => {
-        // req.audio
-
-        // Upload file on yt
-        const audioLink = 'https://www.youtube.com/watch?v=LDU_Txk06tM';
-
-        let clip = new model.clip({
-            editor: req.user._id,
-            poi: req.body.poi,
-            audio: audioLink,
-            purpose: req.body.purpose,
-            language: req.body.language,
-            content: req.body.content,
-            audience: req.body.audience,
-            detail: req.body.detail
-        });
-        
         try {
+            const audioLink = await YoutubeUploader.uploadAudio(req.file.filename);
+
+            let clip = new model.clip({
+                editor: req.user._id,
+                poi: req.body.poi,
+                audio: audioLink,
+                purpose: req.body.purpose,
+                language: req.body.language,
+                content: req.body.content,
+                audience: req.body.audience,
+                detail: req.body.detail
+            });
+        
+
             clip = await clip.save();
             res.status(201).send({
                 success: true,
