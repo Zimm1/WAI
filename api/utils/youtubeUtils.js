@@ -1,5 +1,5 @@
 const fs = require('fs');
-const Google = require("googleapis");
+const {google} = require("googleapis");
 const ffmpeg = require('fluent-ffmpeg');
 const {logger} = require('../utils/logUtils');
 const config = require('config');
@@ -61,7 +61,7 @@ function YoutubeUploader() {
     };
 
     this._authenticate = () => {
-        this.auth = new Google.auth.OAuth2(
+        this.auth = new google.auth.OAuth2(
             CREDENTIALS[this.currentCredential].web.client_id,
             CREDENTIALS[this.currentCredential].web.client_secret
         );
@@ -75,7 +75,7 @@ function YoutubeUploader() {
         new Promise((resolve, reject) => {
             logger.info("Upload started with credential " + ("0" + this.currentCredential).slice(-2));
 
-            Google.youtube({ version: 'v3', auth: this.auth }).videos.insert({
+            google.youtube({ version: 'v3', auth: this.auth }).videos.insert({
                 resource: {
                     snippet: {
                         title: new Date().getTime()
@@ -105,10 +105,12 @@ function YoutubeUploader() {
         this._authenticate();
 
         try {
-            return await this._upload(videoFileName);
+            const uploadResult = await this._upload(videoFileName);
+            return Promise.resolve(uploadResult);
         } catch (err) {
             try {
-                if ((++this.currentCredential) % N_CREDENTIALS === startingCredential) {
+                this.currentCredential = (this.currentCredential + 1) % N_CREDENTIALS;
+                if (this.currentCredential === startingCredential) {
                     const message = "Upload failed with all credentials";
                     logger.error(message);
                     return Promise.reject(new Error(message));
@@ -123,7 +125,7 @@ function YoutubeUploader() {
     this.uploadAudio = async (audioFileName) => {
         const videoFileName = await this._audio2video(audioFileName);
         return this.upload(videoFileName)
-            .then(uploadResult => YOUTUBE_VIDEO_URL + uploadResult.id)
+            .then(uploadResult => YOUTUBE_VIDEO_URL + uploadResult.data.id)
             .finally(() => {
                 fs.unlink(RESOURCES_PATH + audioFileName, () => {});
                 fs.unlink(RESOURCES_PATH + videoFileName, () => {});
