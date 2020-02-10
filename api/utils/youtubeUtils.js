@@ -2,16 +2,18 @@ const fs = require('fs');
 const Google = require("googleapis");
 const ffmpeg = require('fluent-ffmpeg');
 const {logger} = require('../utils/logUtils');
-const RESOURCES_PATH = require('config').get("API.RESOURCES_PATH");
+const config = require('config');
+const RESOURCES_PATH = config.get("API.RESOURCES_PATH");
 
 const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=';
 const BACKGROUND_IMG_FILE_NAME = 'bg.png';
 
-const REFRESH_TOKENS = require('config').get('YOUTUBE.REFRESH_TOKENS');
-const N_CREDENTIALS = 12;
+const YOUTUBE_CONFIG_PATH = '../../config/youtube/';
+const REFRESH_TOKENS = require(YOUTUBE_CONFIG_PATH + 'refresh_tokens');
+const N_CREDENTIALS = config.get('YOUTUBE.N_CREDENTIALS');
 const CREDENTIALS = [];
 for (let i = 0; i < N_CREDENTIALS; ++i) {
-    CREDENTIALS.push(require('../../config/GCPCredentials/credentials-' + ("0" + i).slice(-2)));
+    CREDENTIALS.push(require(YOUTUBE_CONFIG_PATH + 'credentials/credentials-' + ("0" + i).slice(-2)));
 }
 
 function YoutubeUploader() {
@@ -88,7 +90,7 @@ function YoutubeUploader() {
                 }
             }, (err, data) => {
                 if (err) {
-                    logger.info("Upload failed with credential " + ("0" + this.currentCredential).slice(-2));
+                    logger.error("Upload failed with credential " + ("0" + this.currentCredential).slice(-2));
                     logger.error(err.message);
                     reject(err);
                     return;
@@ -107,7 +109,9 @@ function YoutubeUploader() {
         } catch (err) {
             try {
                 if ((++this.currentCredential) % N_CREDENTIALS === startingCredential) {
-                    return Promise.reject(new Error("Upload failed with all credentials"));
+                    const message = "Upload failed with all credentials";
+                    logger.error(message);
+                    return Promise.reject(new Error(message));
                 }
                 return await this.upload(videoFileName, startingCredential);
             } catch (err) {
@@ -137,7 +141,7 @@ const YoutubeUploaderSingleton = (function () {
     return {
         getInstance: () => {
             if (!instance) {
-                instance = createInstance()
+                instance = createInstance();
             }
             return instance;
         }
