@@ -7,7 +7,6 @@
         this.cachePoi = new Set();
         this.page = 0;
         this.count = 0;
-        this.index = -1;
 
         const updateList = (newList) => {
             this.listPoi = newList;
@@ -18,24 +17,12 @@
             return this.listPoi[index];
         };
 
-        this.setIndex = (index) => {
-            this.index = index;
-        };
-
-        const getPoiByIndex = (index) => {
-            return this.listPoi[index];
-        };
-
         const hasPoi = (poi) => {
             return this.cachePoi.has(poi);
         };
 
         const addPoiToCache = (poi) => {
             this.cachePoi.add(poi);
-        };
-        
-        const setCount = (count) => {
-            this.count = count;
         };
         
 
@@ -70,14 +57,28 @@
                         break;
                     }
                 }
+                if (this.count == 20) {
+                    this.page++;
+                }
             });
         };
 
         this.previousPoi = () => {
-            if(this.index > 0){
-                this.index--;
-                $rootScope.$broadcast('wai.poiservice.item', this.index);
+            if(this.cachePoi.size > 0){
+
             }
+        };
+
+        this.more = () => {
+            //riproduce la prossima clip sul luogo
+        };
+
+        this.play = () => {
+            //riprende la riproduzione
+        }
+
+        this.stop = () => {
+            //interrrompe la riproduzione
         };
 
     }
