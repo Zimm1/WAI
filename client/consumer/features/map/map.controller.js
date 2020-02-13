@@ -44,41 +44,37 @@
         * */
         this.mybounds = {'northEast': {'lat': 90, 'lng': 180},'southWest': {'lat': -90, 'lng': -180}};
 
-        $scope.$on('leafletDirectiveMap.map.dblclick', (event, wrap) => {
-            let latLng = new L.latLng(wrap.leafletEvent.latlng.lat, wrap.leafletEvent.latlng.lng);
-            updateUserPosition(latLng.lat, latLng.lng);
-            if(!myRoute){
-                return;
-            }
-            let myWaypoints = myRoute.getWaypoints();
-            if(myWaypoints[1].latLng){
-                updateRoute(latLng, null, vehicle.CYCLING);
-            }
-        });
-
         $scope.$on('wai.map.autocomplete.selected', (event, item) => {
-            if(!userMarker || !myRoute){
-                return;
-            }
-            let destinationCoord = new L.LatLng(parseFloat(item.lat), parseFloat(item.lon));
-            updateRoute(userMarker.getLatLng(), destinationCoord);
+            let userPosition = new L.LatLng(parseFloat(item.lat), parseFloat(item.lon));
+            updateUserPosition(userPosition.lat, userPosition.lng);
         });
 
-        $scope.$on('wai.poiservice.showpoi', (event, item) => {
-            showPOI(JSON.parse(item));
+        $scope.$on('wai.poiservice.showpoi', (event) => {
+            let listPoi = PoiService.getAllPoi();
+            showPOI(listPoi);
+        });
+
+        $scope.$on('wai.map.direction', (event, idPoi, mode) => {
+            let destination = PoiService.getPoi(idPoi);
+            let coord = destination.location;
+            updateRoute(userMarker.getLatLng(), coord, mode);
+        });
+
+        $scope.$on('wai.map.stopdirection', (event) => {
+           clearRoute();
         });
 
         const getLocation = () => {
             map.then((map) => {
                 map
-                    .locate({setView: true, enableHighAccuracy: false})
+                    .locate({setView: true, enableHighAccuracy: true})
                     .on('locationfound', (e) => {
                         updateUserPosition(e.latlng.lat, e.latlng.lng);
                         map.invalidateSize();
                     })
                     .on('locationerror', (e) => {
                         console.log(e);
-                    })
+                    });
             });
         };
 
@@ -117,6 +113,13 @@
                 };
                 userMarker = L.marker(markerLocation, markerOptions);
 
+                let myWaypoints = myRoute.getWaypoints();
+                let destCoord = myWaypoints[1].latLng;
+                if(destCoord && markerLocation.equals(destCoord, 1.0E-3)){
+                    clearRoute();
+                    $rootScope.$broadcast('wai.poiservice.destinationreached');
+                }
+
                 userMarker.on('dragend', function (){
                     updateUserPosition(userMarker.getLatLng().lat, userMarker.getLatLng().lng);
                     let myWaypoints = myRoute.getWaypoints();
@@ -126,8 +129,8 @@
                 });
 
                 map.addLayer(userMarker);
-                if(PoiService.index === -1){
-                    PoiService.update(lat, lng, 0, 10);
+                if(PoiService.isEmpty()){
+                    PoiService.update(lat, lng);
                 }
             });
         };
@@ -152,22 +155,7 @@
                         }),
                     waypoints: [],
                     createMarker: function(index, waypoint, n) {
-                        let blueIcon = new L.Icon({
-                            iconUrl: 'common/assets/png/marker-icon-blue.png',
-                            shadowUrl: 'common/assets/png/marker-shadow.png',
-                            iconSize: [25, 41],
-                            iconAnchor: [12, 41],
-                            popupAnchor: [1, -34],
-                            shadowSize: [41, 41]
-                        });
-                        if(index === 0){
-                            return null;
-                        } else {
-                            return L.marker(waypoint.latLng, {
-                                draggable: true,
-                                icon: blueIcon
-                            });
-                        }
+                        return null;
                     },
                     show: false
                 }).addTo(map);
@@ -177,7 +165,7 @@
         const updateRoute = (from, to, mode) => {
             myRoute.show();
 
-            if(mode){
+            if(mode || mode === 0){
                 myRoute.getRouter().options.profile = vehicle.properties[mode].code;
             }
 
@@ -220,7 +208,7 @@
                     let item = listPOI[i];
                     let marker = L.marker([item.location.lat, item.location.lng], {icon: createAwesomeIcon(item['categories'])});
 
-                    marker.poiIndex = i;
+                    marker.idPoi = item.id;
 
                     getPageImages(item.name, 100).then(function (data){
                         angular.forEach(data['data']['query']['pages'], function (value, key){
@@ -252,8 +240,7 @@
                     });
 
                     marker.on('click', function (e) {
-                        $rootScope.$broadcast('wai.detail.toggle', this.poiIndex);
-                        PoiService.setIndex(this.poiIndex);
+                        $rootScope.$broadcast('wai.detail.toggle', this.idPoi);
                     });
 
                     map.addLayer(marker);
@@ -268,7 +255,6 @@
                 initRoute();
             }, 0);
         });
-
         getLocation();
     }
 })();

@@ -1,30 +1,91 @@
-<md-sidenav class="md-sidenav-left"
+<md-sidenav id="sidenavDetail"
+            class="md-sidenav-left"
             md-component-id="detailSidenav"
             md-disable-backdrop=""
             md-whiteframe="dtlCtrl.whiteframe">
 
-    <md-content layout-margin="">
-        <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}">
+    <md-content layout-margin="" layout-fill="">
+        <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}"/>
         <h1>{{dtlCtrl.title}}</h1>
-        <p>{{dtlCtrl.text}}</p>
-        <md-button ng-click="dtlCtrl.nextPoi()" class="md-accent">
-            Next POI
-        </md-button>
-        <md-button ng-click="dtlCtrl.previousPoi()" class="md-accent">
-            Previous POI
-        </md-button>
-        <md-button ng-click="dtlCtrl.more()" class="md-accent">
-            More
-        </md-button>
-        <md-button ng-click="dtlCtrl.play()" class="md-accent">
-            Play
-        </md-button>
-        <md-button ng-click="dtlCtrl.stop()" class="md-accent">
-            Stop
-        </md-button>
-        <md-button ng-click="dtlCtrl.closeSidenav()" class="md-accent">
-            Close
-        </md-button>
+        <div class="md-padding" layout="column" layout-align="space-around center">
+            <ng-youtube-embed
+                    width="200px"
+                    height="150px"
+                    video="dtlCtrl.videoID"
+                    autoplay="true"
+                    color="white"
+                    disablekb="true"
+                    ng-if="dtlCtrl.videoID!=''">
+            </ng-youtube-embed>
+
+            <div layout="row" class="md-padding">
+                <isteven-multi-select
+                        input-model="dtlCtrl.purposeClip"
+                        output-model="dtlCtrl.selectedPurposeClip"
+                        button-label="name"
+                        item-label="name"
+                        selection-mode="single"
+                        tick-property="selected">
+                </isteven-multi-select>
+                <isteven-multi-select
+                        input-model="dtlCtrl.languageClip"
+                        output-model="dtlCtrl.selectedlanguage"
+                        button-label="name"
+                        item-label="name"
+                        selection-mode="single"
+                        tick-property="selected"
+                        on-item-click="dtlCtrl.updateLanguageText()">
+                </isteven-multi-select>
+                <isteven-multi-select
+                        input-model="dtlCtrl.contentClip"
+                        output-model="dtlCtrl.selectedContentClip"
+                        max-labels="3"
+                        button-label="name"
+                        item-label="name"
+                        tick-property="selected">
+                </isteven-multi-select>
+            </div>
+        </div>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="dtlCtrl.playFirst()" class="md-accent">Where M I?</md-button>
+            <md-button ng-click="dtlCtrl.playMore()" class="md-accent">More</md-button>
+        </div>
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="dtlCtrl.startRouting()">Indications</md-button>
+            <isteven-multi-select
+                    layout-align="center"
+                    input-model="dtlCtrl.mode"
+                    output-model="dtlCtrl.selectedMode"
+                    button-label="name"
+                    item-label="name"
+                    selection-mode="single"
+                    tick-property="selected">
+            </isteven-multi-select>
+            <md-button ng-click="dtlCtrl.stopRouting()">Stop Indications</md-button>
+        </div>
+        <div>
+            <p>{{dtlCtrl.text}}</p>
+            <div layout="row" layout-align="center center">
+                <md-button ng-click="dtlCtrl.textSpeak()" class="md-accent">
+                    Speak
+                </md-button>
+                <md-button ng-click="dtlCtrl.textCancel()" class="md-accent">
+                    Stop
+                </md-button>
+            </div>
+        </div>
+
+        <div layout="row" layout-align="space-between center">
+            <md-button ng-click="dtlCtrl.previousPoi()" class="md-accent">
+                Previous POI
+            </md-button>
+            <md-button ng-click="dtlCtrl.closeSidenav()" class="md-accent">
+                Close
+            </md-button>
+            <md-button ng-click="dtlCtrl.nextPoi()" class="md-accent">
+                Next POI
+            </md-button>
+        </div>
     </md-content>
 
 </md-sidenav>

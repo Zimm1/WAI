@@ -3,6 +3,8 @@
         .module('app', [
             'ngMaterial',
             'ngRoute',
+            'isteven-multi-select',
+            'ngYoutubeEmbed',
             'auth',
             'map',
             'toolbar',

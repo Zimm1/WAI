@@ -197,5 +197,12 @@ md-sidenav {
 
 md-sidenav img {
   margin: 0px !important;
-  width: 100%;
+}
+
+md-sidenav,
+md-sidenav.md-locked-open,
+md-sidenav.md-closed.md-locked-open-add-active {
+  min-width: 400px !important;
+  width: 85vw !important;
+  max-width: 500px !important;
 }

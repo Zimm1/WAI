@@ -8,6 +8,19 @@
             const wikipediaBaseUri = "https://en.wikipedia.org";
             const poiUri = "http://localhost:8000/api/poi";
 
+            this.getAllClip = function (idPoi){
+                return new Promise(function (resolve, reject){
+                    $http({
+                        url: `${poiUri}/${idPoi}`,
+                        method: 'GET'
+                    }).then(function successCallback(response){
+                        resolve(response);
+                    }, function errorCallback(response){
+                        reject(response);
+                    });
+                })
+            };
+
             this.getPoiUserPosition = function (lat, lng, page, limit){
                 return new Promise(function (resolve, reject){
                     $http({

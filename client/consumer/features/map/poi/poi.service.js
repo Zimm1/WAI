@@ -4,30 +4,58 @@
 
     function PoiService($rootScope, MapService) {
         this.listPoi = [];
-        this.cachePoi = new Set();
+        this.cachePoi = [];
         this.page = 0;
+        this.limit = 1;
         this.count = 0;
 
         const updateList = (newList) => {
-            this.listPoi = newList;
-            this.index = 0;
+            for(let i = 0; i < newList.length; i++){
+                let item = newList.pop();
+                this.listPoi.push(item)
+            }
         };
 
-        this.getPoi = (index) => {
-            return this.listPoi[index];
+        this.isEmpty = () => {
+            return this.listPoi.length === 0;
+        };
+
+        this.getPoi = (idPoi) => {
+            for(let i = 0; i < this.listPoi.length; i++){
+                let item = this.listPoi[i];
+                if(idPoi === item.id){
+                    return item
+                }
+            }
+            return null;
+        };
+
+        this.getAllPoi = () => {
+            return this.listPoi;
+        };
+
+        this.addToCache = (poi) => {
+            addPoiToCache(poi);
         };
 
         const hasPoi = (poi) => {
-            return this.cachePoi.has(poi);
+            for(let i = 0; i < this.cachePoi.length; i++){
+                let item = this.cachePoi[i];
+                if(item.id === poi.id){
+                    return true;
+                }
+            }
+            return false;
         };
 
         const addPoiToCache = (poi) => {
-            this.cachePoi.add(poi);
+            if(!hasPoi(poi)){
+                this.cachePoi.push(poi);
+            }
         };
-        
 
-        const getPoiUserPosition = function (lat, lng, page, limit) {
-            return MapService.getPoiUserPosition(lat.toFixed(9), lng.toFixed(9), page, limit).then(function (data) {
+        const getPoiUserPosition = (lat, lng, page, limit) => {
+            return MapService.getPoiUserPosition(lat.toFixed(9), lng.toFixed(9), page, limit).then((data) => {
                 console.log(data);
                 this.count = data['data']['count'];
                 return data['data']['data'];
@@ -37,48 +65,41 @@
             });
         };
 
-        this.update = (lat, lng, page, limit) => {
-            getPoiUserPosition(lat, lng, page, limit).then(function (data){
+        this.update = (lat, lng) => {
+            return getPoiUserPosition(lat, lng, this.page, this.limit).then((data) => {
                 updateList(data);
-                $rootScope.$broadcast('wai.poiservice.showpoi', JSON.stringify(data));
+                $rootScope.$broadcast('wai.poiservice.showpoi');
             });
         };
 
-        this.whereAmI = (lat, lng, page, limit) => {
-            //esegui clip audio
-        };
-
-        this.nextPoi = (lat, lng, limit) => {
-            this.update(lat, lng, this.page, limit).then(function (data){
-                for(let i = 0; i < data.length; i++){
-                    if(!hasPoi(data[i])) {
-                        addPoiToCache(data[i]);
-                        $rootScope.$broadcast('wai.poiservice.item', i);
+        this.nextPoi = (lat, lng) => {
+            this.update(lat,lng).then(()=> {
+                let found = false;
+                for(let i = 0; i < this.listPoi.length; i++){
+                    let item = this.listPoi[i];
+                    if(!hasPoi(item)) {
+                        found = true;
+                        addPoiToCache(item);
+                        $rootScope.$broadcast('wai.poiservice.item', item.id, true);
                         break;
                     }
                 }
-                if (this.count == 20) {
+                if (this.count === this.limit && !found) {
                     this.page++;
+                    this.nextPoi(lat, lng);
                 }
             });
         };
 
-        this.previousPoi = () => {
-            if(this.cachePoi.size > 0){
-
+        this.previousPoi = (currPoi) => {
+            if(this.cachePoi.length > 0){
+                let item = this.cachePoi.pop();
+                if(currPoi.id === item.id){
+                    this.previousPoi(currPoi);
+                } else {
+                    $rootScope.$broadcast('wai.poiservice.item', item.id, true);
+                }
             }
-        };
-
-        this.more = () => {
-            //riproduce la prossima clip sul luogo
-        };
-
-        this.play = () => {
-            //riprende la riproduzione
-        }
-
-        this.stop = () => {
-            //interrrompe la riproduzione
         };
 
     }
