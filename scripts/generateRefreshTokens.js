@@ -1,5 +1,3 @@
-
-
 const {google} = require('googleapis');
 const open = require('open');
 const fs = require('fs');

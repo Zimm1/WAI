@@ -42,8 +42,8 @@ module.exports = {
             _id: 2,
             name: 'religione',
             icon: {
-                icon: 'cross',
-                markerColor: 'blue'
+                icon: 'place-of-worship',
+                markerColor: 'purple'
             }
         }
     ]

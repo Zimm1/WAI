@@ -1,0 +1,8 @@
+{
+  "EXPRESS": {
+    "PORT": 8000
+  },
+  "MONGO": {
+    "DB": "mongodb://mongo_site181925"
+  }
+}
