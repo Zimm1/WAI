@@ -19,6 +19,7 @@
         let userMarker;
         let myRoute;
         let poiMarkers = [];
+        let isWatching = false;
 
         this.center = {};
         this.defaults = {
@@ -58,19 +59,32 @@
             let destination = PoiService.getPoi(idPoi);
             let coord = destination.location;
             updateRoute(userMarker.getLatLng(), coord, mode);
+
+            if(!isWatching){
+                isWatching = true;
+                getLocation(true);
+            }
         });
 
         $scope.$on('wai.map.stopdirection', (event) => {
            clearRoute();
         });
 
-        const getLocation = () => {
+        const getLocation = (watch) => {
             map.then((map) => {
                 map
-                    .locate({setView: true, enableHighAccuracy: true})
+                    .locate({setView: true, enableHighAccuracy: true, watch: watch, maximumAge: 15000})
                     .on('locationfound', (e) => {
                         updateUserPosition(e.latlng.lat, e.latlng.lng);
                         map.invalidateSize();
+
+                        if(myRoute) {
+                            let newCoord = new L.LatLng(e.latlng.lat, e.latlng.lng);
+                            let myWaypoints = myRoute.getWaypoints();
+                            if(myWaypoints[1].latLng){
+                                updateRoute(newCoord, null, null);
+                            }
+                        }
                     })
                     .on('locationerror', (e) => {
                         console.log(e);
@@ -113,18 +127,20 @@
                 };
                 userMarker = L.marker(markerLocation, markerOptions);
 
-                let myWaypoints = myRoute.getWaypoints();
-                let destCoord = myWaypoints[1].latLng;
-                if(destCoord && markerLocation.equals(destCoord, 1.0E-3)){
-                    clearRoute();
-                    $rootScope.$broadcast('wai.poiservice.destinationreached');
+                if(myRoute) {
+                    let myWaypoints = myRoute.getWaypoints();
+                    let destCoord = myWaypoints[1].latLng;
+                    if(destCoord && markerLocation.equals(destCoord, 1.0E-3)){
+                        clearRoute();
+                        $rootScope.$broadcast('wai.poiservice.destinationreached');
+                    }
                 }
 
                 userMarker.on('dragend', function (){
                     updateUserPosition(userMarker.getLatLng().lat, userMarker.getLatLng().lng);
                     let myWaypoints = myRoute.getWaypoints();
                     if(myWaypoints[1].latLng){
-                        updateRoute(userMarker.getLatLng(), null, vehicle.CYCLING);
+                        updateRoute(userMarker.getLatLng(), null, null);
                     }
                 });
 
@@ -190,6 +206,11 @@
         const clearRoute = () => {
             myRoute.setWaypoints([]);
             myRoute.hide();
+
+            map.then((map) => {
+                map.stopLocate();
+                isWatching = false;
+            });
         };
 
         const createAwesomeIcon = (listCat) => {
@@ -212,9 +233,18 @@
 
                     getPageImages(item.name, 100).then(function (data){
                         angular.forEach(data['data']['query']['pages'], function (value, key){
-                            let myLink = value['thumbnail']['source'];
-                            let width = value['thumbnail']['width'];
-                            let height = value['thumbnail']['height'];
+                            let tmp = value['thumbnail'];
+                            let myLink, width, height;
+                            if(tmp){
+                                myLink = tmp['source'];
+                                width = tmp['width'];
+                                height = tmp['height'];
+                            } else {
+                                myLink = "../common/assets/jpg/image-not-available.jpg";
+                                width = 100;
+                                height = 100;
+                            }
+
                             let popupHTML = `
                                 <div>
                                     <img src="${myLink}" width="${width}" height="${height}">
@@ -255,6 +285,6 @@
                 initRoute();
             }, 0);
         });
-        getLocation();
+        getLocation(false);
     }
 })();

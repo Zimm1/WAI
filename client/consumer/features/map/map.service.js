@@ -4,8 +4,10 @@
 
         function MapService($http) {
 
+            this.defaultLangWikipedia = 'it';
+
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
-            const wikipediaBaseUri = "https://en.wikipedia.org";
+            const wikipediaBaseUri = `https://${this.defaultLangWikipedia}.wikipedia.org`;
             const poiUri = "http://localhost:8000/api/poi";
 
             this.getAllClip = function (idPoi){
@@ -24,7 +26,7 @@
             this.getPoiUserPosition = function (lat, lng, page, limit){
                 return new Promise(function (resolve, reject){
                     $http({
-                        url: `${poiUri}?lat=${lat}&lng=${lng}&page=${page}&limit=${limit}`,
+                        url: `${poiUri}?lat=${lat}&lng=${lng}&page=${page}&limit=${limit}&clips=false`,
                         method: 'GET'
                     }).then(function successCallback(response){
                         resolve(response);

@@ -37,6 +37,14 @@ module.exports = {
                 icon: 'futbol',
                 markerColor: 'green'
             }
+        },
+        {
+            _id: 2,
+            name: 'religione',
+            icon: {
+                icon: 'cross',
+                markerColor: 'blue'
+            }
         }
     ]
 

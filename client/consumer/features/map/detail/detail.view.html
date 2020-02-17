@@ -7,47 +7,95 @@
     <md-content layout-margin="" layout-fill="">
         <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}"/>
         <h1>{{dtlCtrl.title}}</h1>
-        <div class="md-padding" layout="column" layout-align="space-around center">
-            <ng-youtube-embed
-                    width="200px"
-                    height="150px"
-                    video="dtlCtrl.videoID"
-                    autoplay="true"
-                    color="white"
-                    disablekb="true"
-                    ng-if="dtlCtrl.videoID!=''">
-            </ng-youtube-embed>
+        <div layout="column" layout-align="space-around start">
+            <div ng-if="dtlCtrl.videoID!=''">
+                <ng-youtube-embed
+                        width="350px"
+                        height="200px"
+                        video="dtlCtrl.videoID"
+                        enablejsapi="true"
+                        origin="*"
+                        autoplay="true"
+                        videoid="playerYT"
+                        onstatechange="dtlCtrl.handlerStateChange"
+                        onready="dtlCtrl.handlerPlayerReady"
+                        onerror="dtlCtrl.handlerError">
+                </ng-youtube-embed>
+            </div>
 
-            <div layout="row" class="md-padding">
-                <isteven-multi-select
-                        input-model="dtlCtrl.purposeClip"
-                        output-model="dtlCtrl.selectedPurposeClip"
-                        button-label="name"
-                        item-label="name"
-                        selection-mode="single"
-                        tick-property="selected">
-                </isteven-multi-select>
-                <isteven-multi-select
-                        input-model="dtlCtrl.languageClip"
-                        output-model="dtlCtrl.selectedlanguage"
-                        button-label="name"
-                        item-label="name"
-                        selection-mode="single"
-                        tick-property="selected"
-                        on-item-click="dtlCtrl.updateLanguageText()">
-                </isteven-multi-select>
-                <isteven-multi-select
-                        input-model="dtlCtrl.contentClip"
-                        output-model="dtlCtrl.selectedContentClip"
-                        max-labels="3"
-                        button-label="name"
-                        item-label="name"
-                        tick-property="selected">
-                </isteven-multi-select>
+            <div layout="column" layout-align="start start" id="filterMenu">
+
+                <div layout="row" class="filterItem">
+                    <label for="purpose">Purpose: </label>
+                    <isteven-multi-select
+                            id="purpose"
+                            input-model="dtlCtrl.purposeClip"
+                            output-model="dtlCtrl.selectedPurposeClip"
+                            button-label="name"
+                            item-label="name"
+                            tick-property="selected"
+                            helper-elements="reset">
+                    </isteven-multi-select>
+                </div>
+
+                <div layout="row" class="filterItem">
+                    <label for="language">Language: </label>
+                    <isteven-multi-select
+                            id="language"
+                            input-model="dtlCtrl.languageClip"
+                            output-model="dtlCtrl.selectedLanguage"
+                            button-label="name"
+                            item-label="name"
+                            selection-mode="single"
+                            tick-property="selected"
+                            on-item-click="dtlCtrl.updateLanguageText()">
+                    </isteven-multi-select>
+                </div>
+
+                <div layot="row" class="filterItem">
+                    <label for="contentClip">Content: </label>
+                    <isteven-multi-select
+                            id="contentClip"
+                            input-model="dtlCtrl.contentClip"
+                            output-model="dtlCtrl.selectedContentClip"
+                            max-labels="3"
+                            button-label="name"
+                            item-label="name"
+                            tick-property="selected"
+                            max-height="200px"
+                            helper-elements="all reset filter">
+                    </isteven-multi-select>
+                </div>
+
+                <div layout="row" class="filterItem">
+                    <label for="audience">Audience: </label>
+                    <isteven-multi-select
+                            id="audience"
+                            input-model="dtlCtrl.audienceClip"
+                            output-model="dtlCtrl.selectedAudience"
+                            button-label="name"
+                            item-label="name"
+                            tick-property="selected"
+                            helper-elements="reset">
+                    </isteven-multi-select>
+                </div>
+
+                <div layout="row" class="filterItem">
+                    <label for="detail">Detail: </label>
+                    <isteven-multi-select
+                            id="detail"
+                            input-model="dtlCtrl.detailClip"
+                            output-model="dtlCtrl.selectedDetail"
+                            button-label="name"
+                            item-label="name"
+                            tick-property="selected"
+                            helper-elements="reset">
+                    </isteven-multi-select>
+                </div>
             </div>
         </div>
         <div layout="row" layout-align="space-between center">
-            <md-button ng-click="dtlCtrl.playFirst()" class="md-accent">Where M I?</md-button>
+            <md-button ng-click="dtlCtrl.playFirst()" class="md-accent" id="prova">Where M I?</md-button>
             <md-button ng-click="dtlCtrl.playMore()" class="md-accent">More</md-button>
         </div>
         <div layout="row" layout-align="space-between center">
@@ -64,12 +112,15 @@
             <md-button ng-click="dtlCtrl.stopRouting()">Stop Indications</md-button>
         </div>
         <div>
-            <p>{{dtlCtrl.text}}</p>
-            <div layout="row" layout-align="center center">
+            <p ng-if="dtlCtrl.text !== null">{{dtlCtrl.text}}</p>
+            <div ng-if="dtlCtrl.text === null" class="failure">
+                <p>Error...</p>
+            </div>
+            <div layout="row" layout-align="center center" ng-if="dtlCtrl.text !=='' && dtlCtrl.text !== null ">
                 <md-button ng-click="dtlCtrl.textSpeak()" class="md-accent">
                     Speak
                 </md-button>
-                <md-button ng-click="dtlCtrl.textCancel()" class="md-accent">
+                <md-button ng-click="dtlCtrl.speakCancel()" class="md-accent">
                     Stop
                 </md-button>
             </div>

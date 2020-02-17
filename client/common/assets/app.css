@@ -206,3 +206,32 @@ md-sidenav.md-closed.md-locked-open-add-active {
   width: 85vw !important;
   max-width: 500px !important;
 }
+
+/* multiselect*/
+/*.checkboxLayer {
+  width: 225px;
+}
+
+.multiSelect .checkboxLayer {
+  min-width: 225px !important;
+}*/
+
+#filterMenu .filterItem{
+  margin: 15px 5px 15px 5px;
+  display: flex;
+  align-items: center;
+}
+
+
+.failure{
+  background:#ff3939;
+  color:#f0f0f0;
+  text-align: center;
+  padding: 5px;
+  font-weight:bold;
+}
+
+.hidePlayer{
+    position: absolute;
+    z-index: -1;
+}

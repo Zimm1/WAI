@@ -6,14 +6,11 @@
         this.listPoi = [];
         this.cachePoi = [];
         this.page = 0;
-        this.limit = 1;
+        this.limit = 20;
         this.count = 0;
 
         const updateList = (newList) => {
-            for(let i = 0; i < newList.length; i++){
-                let item = newList.pop();
-                this.listPoi.push(item)
-            }
+            this.listPoi = newList;
         };
 
         this.isEmpty = () => {
@@ -97,6 +94,10 @@
                 if(currPoi.id === item.id){
                     this.previousPoi(currPoi);
                 } else {
+                    if(this.getPoi(item.id) === null){
+                        this.listPoi.push(item);
+                        $rootScope.$broadcast('wai.poiservice.showpoi', item.id);
+                    }
                     $rootScope.$broadcast('wai.poiservice.item', item.id, true);
                 }
             }

@@ -48,6 +48,7 @@
             for(let i = 0; i < this.listClip.length; i++){
                 let item = this.listClip[i];
                 let idClip = this.listClip[i].audio;
+
                 if(filter(item.purpose, purpose) && filter(item.language, language) && !this.cache.has(idClip)){
                     this.cache.add(idClip);
                     return this.listClip[i].audio;
@@ -56,7 +57,7 @@
             return null;
         };
 
-        this.playMore = (idPoi, purpose, language, content) => {
+        this.playMore = (idPoi, purpose, language, content, audience, detail) => {
             if(idPoi !== this.poiID){
                 return null;
             }
@@ -64,7 +65,10 @@
             for(let i = 0; i < this.listClip.length; i++){
                 let item = this.listClip[i];
                 let idClip = this.listClip[i].audio;
-                if(filter(item.purpose, purpose) && filter(item.content, content) && filter(item.language, language) && !this.cache.has(idClip)){
+
+                if(filter(item.purpose, purpose) && filter(item.content, content) && filter(item.language, language) &&
+                        filter(item.audience, audience) && filter(item.detail, detail) && !this.cache.has(idClip)){
+
                     this.cache.add(idClip);
                     return item.audio;
                 }
