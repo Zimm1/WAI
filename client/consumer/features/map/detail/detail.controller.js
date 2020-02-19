@@ -12,7 +12,7 @@
         this.imgHeight = "";
 
         this.purposeClip = [
-            {name: "what", selected: true}, {name: "how", selected: false}, {name: "why", selected: false}
+            {name: "what", selected: false}, {name: "how", selected: false}, {name: "why", selected: false}
         ];
         this.selectedPurposeClip = [];
 
