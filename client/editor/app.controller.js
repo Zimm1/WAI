@@ -32,15 +32,16 @@
                 })
 
             $scope.submit=function() {
+                var d = new Date();
                 var fileName;
-               // fileName = 'audio_recording_' + control.id + (control.audioModel.type.indexOf('mp3') > -1 ? '.mp3' : '.wav');
+                fileName = 'audio_recording_' + d.getTime().toString() + ".mp3";
 
                 var formData = new FormData();
                 var request = new XMLHttpRequest();
                 var blob = $scope.recorded;
               //  var blob = new Blob([$scope.upFile], { type: "audio/mp3"});
 
-                formData.append("audio", blob, "sdsd.mp3");
+                formData.append("audio", blob, fileName);
                 formData.append("purpose", $scope.purp);
                 formData.append("language", $scope.lan);
                 formData.append("content", $scope.cont);
