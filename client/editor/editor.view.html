@@ -24,22 +24,15 @@
 </head>
 <body ng-app="app" ng-cloak="" style="font-family: sans-serif">
 <div ng-controller="DemoController">
-    <h1 class="text-center">Nuova clip</h1>
 
     <div ng-audio-recorder id="mainAudio" audio-model="recorded" class="container">
         <div ng-if="recorder.isAvailable">
 
-            <div class="panel panel-primary">
+            <div class="panel panel-primary" style="margin-top: 15px;">
 
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <span ng-if="recorder.isHtml5()">
-                            Using HTML5 <a href="?forceFlash" class="btn btn-default btn-sm float-rt">Use FLASH</a>
-                        </span>
-
-                        <span ng-if="!recorder.isHtml5()">
-                            Using FLASH <a href="?" class="btn btn-default btn-sm float-rt">Use Default</a>
-                        </span>
+                    Nuova clip
                     </h3>
 
                     <div class="clearfix"></div>
@@ -81,11 +74,6 @@
                                     </span>
                                 </button>
 
-                                <button class="btn btn-success" ng-click="recorder.save()"
-                                        ng-disabled="recorder.status.isRecording || !recorder.audioModel">
-                                    <i class="glyphicon glyphicon-download"></i> Download
-                                </button>
-
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -104,8 +92,7 @@
                         </div>
 
                         <div ng-show="!recorder.status.isRecording && recorder.audioModel">
-                            <ng-audio-recorder-wave-view wave-color="silver"
-                                                         bar-color="red"></ng-audio-recorder-wave-view>
+                            <ng-audio-recorder-wave-view ></ng-audio-recorder-wave-view>
                         </div>
                     </div>
                 </div>
@@ -140,6 +127,8 @@
             <option value="ita">Ita</option>
         </select>
     </label>
+
+    <br><br>
 
     <label>Content:
         <select ng-model="cont">
@@ -199,9 +188,6 @@
     <button  ng-disabled="selectedId === null || det === null || adnc === null || cont === null || lan === null || purp === null" ng-click="submit()" class = "btn btn-primary">Upload File</button>
 
 </form>
-
 </div>
-
 </body>
-
 </html>
