@@ -12,6 +12,7 @@ services:
       - /home/node/wai/node_modules
     ports:
       - ${APP_PORT}:8000
+      - 443:443
       - ${APP_DEBUG_PORT}:9229
     links:
       - mongo
