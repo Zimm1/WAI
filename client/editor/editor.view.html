@@ -188,7 +188,7 @@
 
     <br><br>
 
-    <label>scegli posto
+    <label>Scegli posto:
         <select ng-model="selectedId">
             <option ng-value="item.id" ng-repeat="item in listId">{{item.name}}</option>
         </select>
@@ -196,7 +196,7 @@
 
     <br><br>
 
-    <button ng-click="submit()" class = "btn btn-primary">Upload File</button>
+    <button  ng-disabled="selectedId === null || det === null || adnc === null || cont === null || lan === null || purp === null" ng-click="submit()" class = "btn btn-primary">Upload File</button>
 
 </form>
 
