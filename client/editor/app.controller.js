@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     angular.module('app')
-        .controller('DemoController', function ($scope, $timeout, $http) {
+        .controller('DemoController', function ($scope, $timeout, $http, $localStorage, $mdToast) {
             console.log("Loaded");
 
             this.getPoiUserPosition = function (page, limit){
@@ -31,6 +31,15 @@
                     $scope.listId=item;
                 })
 
+            const showToast = (message) => {
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent(message)
+                        .position('top center')
+                        .hideDelay(3000)
+                );
+            };
+
             $scope.submit=function() {
                 var d = new Date();
                 var fileName;
@@ -50,9 +59,24 @@
                 formData.append("poi", $scope.selectedId);
 
                 request.open("POST", "/api/clip", true);
-                request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjIsImVtYWlsIjoiYUBiLmJiIiwidXNlcm5hbWUiOiJhYWEiLCJyb2xlIjoxLCJleHAiOjE1ODIxMzgyMTYsImlhdCI6MTU4MjA1MTgxNn0.4ACQk-N03rOZQ8Er1MHGFmbFFhdGq-wzxUNBlLSMImE");
+                request.setRequestHeader("Authorization", ($localStorage.currentUser ? ("Bearer " + $localStorage.currentUser.token) : ''));
+
+                request.onreadystatechange = function() {
+                    if (request.readyState === 4) {
+                        let { response } = request;
+                        response = JSON.parse(response);
+                        if (response.code === 401) {
+                            showToast("Login as editor to upload a clip");
+                        } else if (response.code) {
+                            showToast(response.message);
+                        } else {
+                            showToast("Clip uploaded successfully");
+                        }
+                    }
+                };
 
                 request.send(formData);
+                return false;
             }
         })
 
