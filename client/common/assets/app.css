@@ -235,3 +235,14 @@ md-sidenav.md-closed.md-locked-open-add-active {
     position: absolute;
     z-index: -1;
 }
+.panel-primary>.panel-heading{
+  color: #fff;
+  background-color: #FF5722;
+  border-color: #337ab7;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #FF5722;
+  border-color: #FF5722;
+}
+
