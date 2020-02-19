@@ -19,6 +19,9 @@ services:
     container_name: mongo
     image: mongo
     volumes:
-      - /data/wai-data:/data/db
+      - wai-data:/data/db
     ports:
       - ${DB_PORT}:27017
+
+volumes:
+  wai-data:
