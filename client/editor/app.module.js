@@ -6,7 +6,8 @@
             'ngRoute',
             'auth',
             'toolbar',
-            'users'
+            'users',
+            'angularAudioRecorder'
         ])
         .config(($mdThemingProvider, $mdIconProvider) => {
             $mdIconProvider
@@ -28,7 +29,7 @@
         .config(($routeProvider, $locationProvider) => {
             $routeProvider
                 .when("/", {
-                    templateUrl : "../common/features/users/view/users.view.html"
+                    templateUrl : "editor.view.html"
                 })
                 .when("/signin", {
                     templateUrl : "../common/features/auth/auth.view.html"
