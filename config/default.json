@@ -1,8 +1,26 @@
 {
   "API": {
+    "CLIP": {
+      "PURPOSE": [
+        "what", "how", "why"
+      ],
+      "LANGUAGE": [
+        "ita", "eng"
+      ],
+      "CONTENT": [
+        "none", "nat", "art", "his", "flk", "mod", "rel", "cul", "spo", "mus", "mov", "fas", "shp", "tec", "pop", "prs", "oth"
+      ],
+      "AUDIENCE": [
+        "gen", "pre", "elm", "mid", "scl"
+      ],
+      "DETAIL": {
+        "MAX": 3
+      }
+    },
     "PAGINATION": {
       "LIMIT": 20
-    }
+    },
+    "RESOURCES_PATH": "api/res/"
   },
   "AUTH": {
     "TOKEN_EXPIRE_SECONDS": 86400,
@@ -21,6 +39,9 @@
         "name": "consumer"
       }
     }
+  },
+  "YOUTUBE": {
+    "N_CREDENTIALS": 12
   },
   "EXPRESS": {
     "PORT": 8000

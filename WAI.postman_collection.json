@@ -1,86 +1,465 @@
 {
-	"variables": [],
 	"info": {
+		"_postman_id": "19d97da3-640d-40eb-bc05-fcaf191ac405",
 		"name": "WAI",
-		"_postman_id": "1ad366c8-ddd9-d9ba-649d-57bf2ca93b23",
-		"description": "",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Item",
-			"description": "",
+			"name": "Auth",
 			"item": [
 				{
-					"name": "WAI - Item - Get all",
+					"name": "WAI - Auth - Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a59aa71c-906d-4d3e-9082-7a0a5e3c731b",
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"token\", \"Bearer \" + jsonData.token);",
+									"}",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"url": "{{host}}/api/item",
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "WAI - Item - Get",
-					"request": {
-						"url": "{{host}}/api/item/3",
-						"method": "GET",
-						"header": [],
-						"body": {},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "WAI - Item - Add",
-					"request": {
-						"url": "{{host}}/api/item",
 						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
+								"name": "Content-Type",
 								"value": "application/json",
-								"description": ""
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Item1\"\n}"
+							"raw": "{\n\t\"username\": \"bbb\",\n\t\"email\": \"b@b.bb\",\n\t\"password\": \"123456\",\n\t\"role\": 1\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "{{host}}/api/auth/signup",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "WAI - Item - Update",
+					"name": "WAI - Auth - Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "35f72229-2e60-41f5-81d7-31bfad523afe",
+								"exec": [
+									"if (responseCode.code === 200) {",
+									"    var jsonData = JSON.parse(responseBody);",
+									"    postman.setEnvironmentVariable(\"token\", \"Bearer \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
-						"url": "{{host}}/api/item/3",
-						"method": "PUT",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
+								"name": "Content-Type",
 								"value": "application/json",
-								"description": ""
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Oggetto\"\n}"
+							"raw": "{\n\t\"username\": \"bbb\",\n\t\"password\": \"123456\"\n}"
 						},
-						"description": ""
+						"url": {
+							"raw": "{{host}}/api/auth/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "POI",
+			"item": [
+				{
+					"name": "WAI - POI - Get all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/api/poi?page=0&limit=20&lat=10.2&lng=-10",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"poi"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "lat",
+									"value": "10.2"
+								},
+								{
+									"key": "lng",
+									"value": "-10"
+								},
+								{
+									"key": "clips",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "WAI - Item - Delete",
+					"name": "WAI - POI - Get",
 					"request": {
-						"url": "{{host}}/api/item/2",
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
-						"body": {},
-						"description": ""
+						"url": {
+							"raw": "{{host}}/api/poi/0?",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"poi",
+								"0"
+							],
+							"query": [
+								{
+									"key": "clips",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - POI - Add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"EEE\",\n\t\"lat\": 10.123456,\n\t\"lng\": -10.123456,\n\t\"categories\": [\n\t\t0,1\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{host}}/api/poi",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"poi"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Clip",
+			"item": [
+				{
+					"name": "WAI - Clip - Get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/clip?page=0&limit=20",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"clip"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Clip - Get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/clip/8",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"clip",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Clip - Add",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "audio",
+									"type": "file",
+									"src": "/C:/Users/zimm1/Music/Warriors.mp3"
+								},
+								{
+									"key": "purpose",
+									"value": "what",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "eng",
+									"type": "text"
+								},
+								{
+									"key": "content",
+									"value": "art",
+									"type": "text"
+								},
+								{
+									"key": "audience",
+									"value": "scl",
+									"type": "text"
+								},
+								{
+									"key": "detail",
+									"value": "2",
+									"type": "text"
+								},
+								{
+									"key": "poi",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/api/clip",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"clip"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - Clip - Put",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "audio",
+									"type": "file",
+									"src": "/C:/Users/zimm1/Music/Warriors.mp3",
+									"disabled": true
+								},
+								{
+									"key": "purpose",
+									"value": "purpose",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "language",
+									"value": "language",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "content",
+									"value": "content",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "audience",
+									"value": "audience",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "detail",
+									"value": "detail",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "poi",
+									"value": "0",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/api/clip/8",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"clip",
+								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "WAI - User - Get all",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/user",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "WAI - User - Get",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{host}}/api/user/11",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"11"
+							]
+						}
 					},
 					"response": []
 				}
@@ -89,11 +468,17 @@
 		{
 			"name": "WAI - Root",
 			"request": {
-				"url": "{{host}}/api",
 				"method": "GET",
 				"header": [],
-				"body": {},
-				"description": ""
+				"url": {
+					"raw": "{{host}}/api",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api"
+					]
+				}
 			},
 			"response": []
 		}

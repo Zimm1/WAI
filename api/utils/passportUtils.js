@@ -17,7 +17,7 @@ function initPassport() {
         }
     ));
 
-    return passport.initialize();
+    return passport.initialize(null);
 }
 
 module.exports = {

@@ -10,11 +10,15 @@
 
     <base href="/" />
 
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="../common/lib/angular-material/angular-material.css"/>
     <link rel="stylesheet" href="../common/assets/app.css"/>
     <link rel="stylesheet" href="../common/lib/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="../common/lib/leaflet-routing-machine/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="../common/lib/leaflet-awesome-marker/leaflet.awesome-markers.css" />
+    <link rel="stylesheet" href="../common/lib/angular-multi-select/multi-select.css"/>
 
     <style type="text/css">
       /**
@@ -37,16 +41,25 @@
     <script src="../common/lib/angular/angular-messages.js"></script>
     <script src="../common/lib/angular/ngStorage.js"></script>
     <script src="../common/lib/angular-material/angular-material.js"></script>
+    <script src="../common/lib/youtube-embed/youtube-embed.js"></script>
+    <script src="../common/lib/angular-multi-select/angular-multi-select.js"></script>
+
+    <script src="https://kit.fontawesome.com/9c9bcdb76a.js" crossorigin="anonymous"></script>
 
     <script src="../common/lib/leaflet/leaflet.js"></script>
     <script src="../common/lib/leaflet/angular-leaflet-directive.js"></script>
+    <script src="../common/lib/leaflet-routing-machine/leaflet-routing-machine.min.js"></script>
+    <script src="../common/lib/leaflet-awesome-marker/leaflet.awesome-markers.min.js"></script>
 
     <script src="app.module.js"></script>
 
     <script src="features/map/map.module.js"></script>
     <script src="features/map/map.controller.js"></script>
     <script src="features/map/autocomplete/autocomplete.controller.js"></script>
+    <script src="features/map/detail/detail.controller.js"></script>
     <script src="features/map/map.service.js"></script>
+    <script src="features/map/poi/poi.service.js"></script>
+    <script src="features/map/player/player.service.js"></script>
 
     <script src="../common/features/auth/auth.module.js"></script>
     <script src="../common/features/auth/auth.controller.js"></script>
@@ -58,5 +71,6 @@
     <script src="../common/features/users/users.module.js"></script>
     <script src="../common/features/users/users.controller.js"></script>
     <script src="../common/features/users/users.service.js"></script>
+
   </body>
 </html>

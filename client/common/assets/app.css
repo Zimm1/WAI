@@ -5,6 +5,11 @@ html, body {
   padding: 0;
 }
 
+html, body, #map {
+  height: 100%;
+  width: 100vw;
+}
+
 /* Toolbar area */
 
 .menu {
@@ -162,4 +167,71 @@ md-toast.md-center {
 
 md-virtual-repeat-container {
   z-index: 1000 !important;
+}
+
+.leaflet-control-container .leaflet-routing-container-hide {
+  display: none;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius:0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+}
+
+.popupStyle img {
+    vertical-align: top;
+}
+
+.popupStyle span {
+    padding: 0 0.7em 0 0.7em;
+    font-size: 1.4em;
+}
+
+/* sidenav*/
+md-sidenav {
+  z-index: 1000 !important;
+}
+
+md-sidenav img {
+  margin: 0px !important;
+}
+
+md-sidenav,
+md-sidenav.md-locked-open,
+md-sidenav.md-closed.md-locked-open-add-active {
+  min-width: 400px !important;
+  width: 85vw !important;
+  max-width: 500px !important;
+}
+
+/* multiselect*/
+/*.checkboxLayer {
+  width: 225px;
+}
+
+.multiSelect .checkboxLayer {
+  min-width: 225px !important;
+}*/
+
+#filterMenu .filterItem{
+  margin: 15px 5px 15px 5px;
+  display: flex;
+  align-items: center;
+}
+
+
+.failure{
+  background:#ff3939;
+  color:#f0f0f0;
+  text-align: center;
+  padding: 5px;
+  font-weight:bold;
+}
+
+.hidePlayer{
+    position: absolute;
+    z-index: -1;
 }

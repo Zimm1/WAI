@@ -45,6 +45,19 @@ function addIndexesToSchema(model, schema) {
     });
 }
 
+function addVirtualsToSchema(model, schema) {
+    if (!model.virtuals) {
+        return;
+    }
+
+    for (let [key, value] of Object.entries(model.virtuals)) {
+        schema.virtual(key, value);
+    }
+
+    schema.set('toObject', { virtuals: true });
+    schema.set('toJSON', { virtuals: true });
+}
+
 function initSchemaData(model, schema) {
     if (!model.init || !model.init.length) {
         return Promise.resolve();
@@ -78,6 +91,7 @@ fs
         modelSchema.methods = model.methods || {};
 
         addIndexesToSchema(model, modelSchema);
+        addVirtualsToSchema(model, modelSchema);
 
         const schema = mongoose.model(modelName, modelSchema);
 

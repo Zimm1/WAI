@@ -1,0 +1,5 @@
+{
+  "MONGO": {
+    "DB": "mongodb://site181925:Eelei7ee@mongo_site181925:27017/wai"
+  }
+}

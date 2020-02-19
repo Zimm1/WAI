@@ -12,7 +12,7 @@ router.get('/:id(\\d+)/',
 );
 
 router.get('/',
-    authUtils.auth().role(ROLES.ADMIN).check(),
+    new authUtils.auth().role(ROLES.ADMIN).check(),
     userController.getAll
 );
 
