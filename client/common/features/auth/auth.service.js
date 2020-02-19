@@ -5,11 +5,21 @@
         .module('auth')
         .factory('AuthService', AuthService);
 
-    function AuthService($localStorage, $mdToast) {
+    function AuthService($localStorage, $mdToast, $http) {
         const service = {};
 
         service.logIn = (username, password) => {
-            return axios.post('/api/auth/login', {username, password}).then((response) => {
+             return new Promise((resolve, reject) => {
+                $http({
+                    url: '/api/auth/login',
+                    method: 'POST',
+                    data: {username, password}
+                }).then((response) => {
+                    resolve(response);
+                }, (err) => {
+                    reject(err);
+                });
+            }).then((response) => {
                 if (!response.data.success) {
                     throw {response};
                 }
@@ -22,12 +32,22 @@
 
                 return user;
             }).catch((error) => {
-                throw error.response.data.message;
+                throw error.data.message;
             });
         };
 
         service.signUp = (username, email, password) => {
-            return axios.post('/api/auth/signup', {username, email, password}).then((response) => {
+            return new Promise((resolve, reject) => {
+                $http({
+                    url: '/api/auth/signup',
+                    method: 'POST',
+                    data: {username, email, password}
+                }).then((response) => {
+                    resolve(response);
+                }, (err) => {
+                    reject(err);
+                });
+            }).then((response) => {
                 if (!response.data.success) {
                     throw {response};
                 }
@@ -40,7 +60,7 @@
 
                 return user;
             }).catch((error) => {
-                throw error.response.data.message;
+                throw error.data.message;
             });
         };
 
@@ -65,12 +85,12 @@
 
         const setCurrentUser = (currentUser) => {
             $localStorage.currentUser = currentUser;
-            axios.defaults.headers.common.Authorization = 'Bearer ' + currentUser.token;
+            $http.defaults.headers.common.Authorization = 'Bearer ' + currentUser.token;
         };
 
         const removeCurrentUser = () => {
             delete $localStorage.currentUser;
-            axios.defaults.headers.common.Authorization = '';
+            $http.defaults.headers.common.Authorization = '';
         };
 
         return service;

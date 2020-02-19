@@ -397,7 +397,6 @@ var RecorderController = function (element, service, recorderUtils, $scope, $tim
                 formData.append("detail", $scope.det);
                 formData.append("poi", $scope.selectedId);
 
-    request.open("POST", "http://localhost:8000/api/clip", true);
     request.setRequestHeader("Authorization","Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjAsImVtYWlsIjoiYkBiLmJiIiwidXNlcm5hbWUiOiJiYmIiLCJyb2xlIjoxLCJleHAiOjE1ODIxMDk5MTAsImlhdCI6MTU4MjAyMzUxMH0.HRX5klv666niatoJoHgeYcWtMlJ4me_sqynSCWc9YxY");
 
     request.send(formData);

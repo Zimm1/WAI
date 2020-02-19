@@ -8,7 +8,7 @@
 
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
             const wikipediaBaseUri = `https://${this.defaultLangWikipedia}.wikipedia.org`;
-            const poiUri = "http://localhost:8000/api/poi";
+            const poiUri = "/api/poi";
 
             this.getAllClip = function (idPoi){
                 return new Promise(function (resolve, reject){

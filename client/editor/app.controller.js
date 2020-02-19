@@ -7,7 +7,7 @@
             this.getPoiUserPosition = function (page, limit){
                 return new Promise(function (resolve, reject){
                     $http({
-                        url: `http://localhost:8000/api/poi?page=${page}&limit=${limit}&clips=false`,
+                        url: `/api/poi?page=${page}&limit=${limit}&clips=false`,
                         method: 'GET'
                     }).then(function successCallback(response){
                         resolve(response);
@@ -49,7 +49,7 @@
                 formData.append("detail", $scope.det);
                 formData.append("poi", $scope.selectedId);
 
-                request.open("POST", "http://localhost:8000/api/clip", true);
+                request.open("POST", "/api/clip", true);
                 request.setRequestHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjIsImVtYWlsIjoiYUBiLmJiIiwidXNlcm5hbWUiOiJhYWEiLCJyb2xlIjoxLCJleHAiOjE1ODIxMzgyMTYsImlhdCI6MTU4MjA1MTgxNn0.4ACQk-N03rOZQ8Er1MHGFmbFFhdGq-wzxUNBlLSMImE");
 
                 request.send(formData);

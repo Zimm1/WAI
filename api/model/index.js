@@ -31,7 +31,10 @@ function omitPrivate(model) {
 
 function checkAutoIncrement(model, modelSchema, modelName) {
     if (!model.schema._id) {
-        modelSchema.plugin(AutoIncrement.plugin, modelName);
+        modelSchema.plugin(AutoIncrement.plugin, {
+            model: modelName,
+            startAt: model.init ? model.init.length : 0
+        });
     }
 }
 
