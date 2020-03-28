@@ -84,6 +84,9 @@
             for(let clip of clipList) {
                 let found = false;
                 for(let i = 0; i < this.listPoi.length; i++){
+                    if(clip.geoloc.length > 11){
+                        clip.geoloc = clip.geoloc.substring(0, 11);
+                    }
                     if(clip.geoloc === this.listPoi[i].geoloc){
                         this.listPoi[i].clips.push(clip);
                         found = true;

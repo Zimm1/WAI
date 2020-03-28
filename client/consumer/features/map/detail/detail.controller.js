@@ -119,8 +119,6 @@
 
         this.updateLanguageText = () => {
             this.speakCancel();
-            //let tmp = 'it';//this.selectedLanguage[0];
-            //let lang = tmp.lang;
             let selectedLang = this.selectedLanguage[0];
             let lang = selectedLang.lang;
 

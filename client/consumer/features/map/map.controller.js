@@ -283,6 +283,7 @@
                 for(let item of listPOI){
                     let cat = PoiService.getCategoryPoi(item.geoloc);
                     let loc = OpenLocationCode.decode(item.geoloc);
+
                     let marker = L.marker([loc.latitudeCenter, loc.longitudeCenter], {icon: createAwesomeIcon(cat)});
 
                     marker.idPoi = item.geoloc;

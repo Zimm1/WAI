@@ -88,12 +88,13 @@
                 })
             };
 
-            const getPoiInfo = function (placeIdOsm, placeTag) {
+            const getPoiInfo = function (placeIdOsm, placeTag, defaultName) {
                 return new Promise((resolve, reject) => {
                     $http({
                         url: `${baseUriOverpassApi}?data=[out:json];${placeTag}(${placeIdOsm});out;`,
                         method: 'GET'
                     }).then(function successCallback(response){
+                        response.defaultName = defaultName;
                         resolve(response);
                     }, function errorCallback(response){
                         reject(response);
@@ -120,12 +121,21 @@
                 return getPoiName(pos.latitudeCenter, pos.longitudeCenter).then((data) => {
                     let idOsm = data['data']['osm_id'];
                     let tagOsm = data['data']['osm_type'];
-                    return getPoiInfo(idOsm, tagOsm).then((data) => {
+                    let countryCode = data['data']['address']['country_code'];
+                    let displayName = data['data']['display_name'];
+                    let arr = displayName.split(',');
+                    let defaultName = [countryCode, arr[0]];
+                    return getPoiInfo(idOsm, tagOsm, defaultName).then((data) => {
                         console.log(data);
                         let item = data['data']['elements'][0];
+                        let defaultName = data['defaultName'];
                         if (item) {
-                            let wikipediaTags = item['tags']['wikipedia'];
-                            return wikipediaTags.split(':');
+                            if(item['tags']['wikipedia']){
+                                let wikipediaTags = item['tags']['wikipedia'];
+                                return wikipediaTags.split(':');
+                            } else {
+                                return defaultName;
+                            }
                         }
                     });
                 });
