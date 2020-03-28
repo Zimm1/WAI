@@ -57,7 +57,8 @@
 
         $scope.$on('wai.map.direction', (event, idPoi, mode) => {
             let destination = PoiService.getPoi(idPoi);
-            let coord = destination.location;
+            let tmpCoord = OpenLocationCode.decode(destination.geoloc);
+            let coord = new L.LatLng(tmpCoord.latitudeCenter, tmpCoord.longitudeCenter);
             updateRoute(userMarker.getLatLng(), coord, mode);
 
             if(!isWatching){
@@ -130,9 +131,13 @@
                 if(myRoute) {
                     let myWaypoints = myRoute.getWaypoints();
                     let destCoord = myWaypoints[1].latLng;
-                    if(destCoord && markerLocation.equals(destCoord, 1.0E-3)){
-                        clearRoute();
-                        $rootScope.$broadcast('wai.poiservice.destinationreached');
+                    if(destCoord){
+                        let destinationOlc = OpenLocationCode.encode(destCoord.lat,destCoord.lng);
+                        let userPositionOlc = OpenLocationCode.encode(markerLocation.lat.toFixed(6), markerLocation.lng.toFixed(6));
+                        if(destinationOlc === userPositionOlc){
+                            clearRoute();
+                            $rootScope.$broadcast('wai.poiservice.destinationreached');
+                        }
                     }
                 }
 
@@ -146,13 +151,14 @@
 
                 map.addLayer(userMarker);
                 if(PoiService.isEmpty()){
-                    PoiService.update(lat, lng);
+                    let olc = OpenLocationCode.encode(lat, lng);
+                    MapService.loadClipFromYoutube(olc);
                 }
             });
         };
 
-        const getPageImages = function (pageTitle, imageSize) {
-            return MapService.getPageImages(pageTitle, imageSize).then(function (data) {
+        const getPageImages = function (lang, pageTitle, imageSize) {
+            return MapService.getPageImages(lang, pageTitle, imageSize).then(function (data) {
                 console.log(data);
                 return data;
             }).catch(function (error) {
@@ -160,6 +166,56 @@
                 return[];
             });
         };
+
+        const bindMarkerPopUp = (index) => {
+            if(index >= poiMarkers.length) {
+                return;
+            }
+            let olc = poiMarkers[index].idPoi;
+            MapService.getPoiDefaultName(olc).then((name) => {
+                getPageImages(name[0], name[1], 100).then((data) => {
+                    angular.forEach(data['data']['query']['pages'], (value, key) => {
+                        let tmp = value['thumbnail'];
+                        let myLink, width, height;
+                        if(tmp){
+                            myLink = tmp['source'];
+                            width = tmp['width'];
+                            height = tmp['height'];
+                        } else {
+                            myLink = "../common/assets/jpg/image-not-available.jpg";
+                            width = 100;
+                            height = 100;
+                        }
+
+                        let popupHTML = `
+                            <div>
+                                <img src="${myLink}" width="${width}" height="${height}" />
+                                <span><strong>${name[1]}</strong></span>
+                            </div>
+                        `;
+                        poiMarkers[index].bindPopup(popupHTML, {
+                            maxWidth: 700,
+                            closeButton: false,
+                            className: 'popupStyle'
+                        });
+                        poiMarkers[index].on('mouseover', function (e){
+                            this.openPopup();
+                        });
+
+                        poiMarkers[index].on('mouseout', function (e){
+                            this.closePopup();
+                        });
+                        bindMarkerPopUp(++index);
+                    });
+                }).catch((error) => {
+                    console.error(error);
+                    bindMarkerPopUp(++index);
+                });
+            }).catch((error) => {
+                console.error(error);
+                bindMarkerPopUp(++index);
+            });
+        }
 
         const initRoute = (mode) => {
             //let options = { profile: vehicle.properties[vehicle.WALKING].code };
@@ -213,9 +269,8 @@
             });
         };
 
-        const createAwesomeIcon = (listCat) => {
-            let item = listCat[0];
-            return L.AwesomeMarkers.icon(item.icon)
+        const createAwesomeIcon = (cat) => {
+            return L.AwesomeMarkers.icon(cat);
         };
 
         const showPOI = (listPOI) => {
@@ -225,49 +280,12 @@
                 }
                 poiMarkers = [];
                 L.AwesomeMarkers.Icon.prototype.options.prefix = 'fa';
-                for(let i = 0; i < listPOI.length; i++){
-                    let item = listPOI[i];
-                    let marker = L.marker([item.location.lat, item.location.lng], {icon: createAwesomeIcon(item['categories'])});
+                for(let item of listPOI){
+                    let cat = PoiService.getCategoryPoi(item.geoloc);
+                    let loc = OpenLocationCode.decode(item.geoloc);
+                    let marker = L.marker([loc.latitudeCenter, loc.longitudeCenter], {icon: createAwesomeIcon(cat)});
 
-                    marker.idPoi = item.id;
-
-                    getPageImages(item.name, 100).then(function (data){
-                        angular.forEach(data['data']['query']['pages'], function (value, key){
-                            let tmp = value['thumbnail'];
-                            let myLink, width, height;
-                            if(tmp){
-                                myLink = tmp['source'];
-                                width = tmp['width'];
-                                height = tmp['height'];
-                            } else {
-                                myLink = "../common/assets/jpg/image-not-available.jpg";
-                                width = 100;
-                                height = 100;
-                            }
-
-                            let popupHTML = `
-                                <div>
-                                    <img src="${myLink}" width="${width}" height="${height}">
-                                    <span>
-                                        <strong>${item.name}</strong>
-                                    </span>
-                                </div>
-                            `;
-                            marker.bindPopup(popupHTML, {
-                                maxWidth: 700,
-                                closeButton: false,
-                                className: 'popupStyle'
-                            });
-                        });
-                    });
-
-                    marker.on('mouseover', function (e){
-                        this.openPopup();
-                    });
-
-                    marker.on('mouseout', function (e){
-                        this.closePopup();
-                    });
+                    marker.idPoi = item.geoloc;
 
                     marker.on('click', function (e) {
                         $rootScope.$broadcast('wai.detail.toggle', this.idPoi);
@@ -276,6 +294,7 @@
                     map.addLayer(marker);
                     poiMarkers.push(marker);
                 }
+                bindMarkerPopUp(0);
             });
         };
 

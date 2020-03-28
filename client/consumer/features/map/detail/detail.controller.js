@@ -11,20 +11,6 @@
         this.imgLink = "";
         this.imgHeight = "";
 
-        this.purposeClip = [
-            {name: "what", selected: false}, {name: "how", selected: false}, {name: "why", selected: false}
-        ];
-        this.selectedPurposeClip = [];
-
-        this.contentClip = [
-            {name: "none", selected:false}, {name: "nat", selected: false}, {name: "art", selected: false}, {name: "his", selected: false},
-            {name:"flk", selected: false}, {name: "mod", selected: false}, {name: "rel", selected: false}, {name: "cul", selected: false},
-            {name: "spo", selected: false}, {name: "mus", selected: false}, {name: "mov", selected: false}, {name: "fas", selected: false},
-            {name: "shp", selected: false}, {name: "tec", selected: false}, {name: "pop", selected: false}, {name: "prs", selected: false},
-            {name: "oth", selected: false}
-        ];
-        this.selectedContentClip = [];
-
         this.languageClip = [
             {name: "ita", lang: "it",selected: true}, {name: "eng", lang: 'en',selected: false}, {name: "fr", lang: 'fr',selected: false}
         ];
@@ -32,18 +18,11 @@
 
         this.mode = [{name: "walking", value: 0, selected: true}, {name: "driving", value: 1, selected: false},
             {name: "cycling", value: 2, selected: false}];
-
-        this.audienceClip = [{name: "gen", selected: false}, {name: "pre", selected: false}, {name: "elm", selected: false},
-            {name: "mid", selected: false}, {name: "scl", selected: false}];
-        this.selectedAudience = [];
-
-        this.detailClip = [{name: "introduction", value: 0, selected: false}, {name: "low detail", value: 1, selected: false},
-            {name: 'medium detail', value: 2, selected: false}, {name: 'high detail', value: 3, selected: false}];
-        this.selectedDetail = [];
-
         this.selectedMode = '';
+
         this.videoID = "";
         this.synth = null;
+        this.clickedWhereIam = false;
         
         this.toggleLeft = (item) => {
             $mdSidenav('detailSidenav').toggle().then(function (data) {
@@ -62,17 +41,11 @@
         };
 
         this.nextPoi = () => {
-            let lat = this.poiObj.location.lat;
-            let lng = this.poiObj.location.lng;
-            PoiService.nextPoi(lat,lng);
+            PoiService.nextPoi(this.poiObj);
         };
 
         this.previousPoi = () => {
-            PoiService.previousPoi(this.poiObj);
-        };
-
-        const getDefaultName = () => {
-            return this.poiObj.name;
+            PoiService.previousPoi();
         };
 
         const getOnlyName = (items) => {
@@ -97,37 +70,45 @@
             return document.getElementById("sidenavDetail").clientWidth;
         };
 
-        this.playMore = () => {
-            let namePurpose = getOnlyName(this.selectedPurposeClip);
-            let nameContent = getOnlyName(this.selectedContentClip);
-            let nameLanguage = getOnlyName(this.selectedLanguage);
-            let nameAudience = getOnlyName(this.selectedAudience);
-            let valueDetail = getValueDetail(this.selectedDetail);
-            let myId = this.poiObj.id;
-            let newLink = PlayerService.playMore(myId, namePurpose, nameLanguage,nameContent, nameAudience, valueDetail);
-            if(newLink !== null){
-                this.videoID = newLink;
+        this.playWhat = () => {
+            this.clickedWhereIam = true;
+            let url = PlayerService.whereIam(this.poiObj.geoloc);
+            if(url) {
+                this.videoID = url;
             } else {
                 this.videoID = '';
-                //this.videoID = "4Mg7fbki-gA";
             }
-        };
+        }
 
-        this.playFirst= () => {
-            let namePurpose = getOnlyName(this.selectedPurposeClip);
-            let nameLanguage = getOnlyName(this.selectedLanguage);
-            let myId = this.poiObj.id;
-            let newLink = PlayerService.playFirst(myId, namePurpose, nameLanguage);
-            if(newLink !== null){
-                this.videoID = newLink;
+        this.playLess = () => {
+            let url = PlayerService.lessDetail(this.poiObj.geoloc);
+            if(url) {
+                this.videoID = url;
             } else {
                 this.videoID = '';
-                //this.videoID = 'LDU_Txk06tM';
             }
-        };
+        }
+
+        this.playMore = () => {
+            let url = PlayerService.moreDetail(this.poiObj.geoloc);
+            if(url) {
+                this.videoID = url;
+            } else {
+                this.videoID = '';
+            }
+        }
+
+        this.playHow = () => {
+            let url = PlayerService.howClip(this.poiObj.geoloc);
+            if(url) {
+                this.videoID = url;
+            } else {
+                this.videoID = '';
+            }
+        }
 
         this.startRouting = () => {
-            let idDest = this.poiObj.id;
+            let idDest = this.poiObj.geoloc;
             let mode =  this.selectedMode[0].value;
             $rootScope.$broadcast('wai.map.direction', idDest, mode);
         };
@@ -138,30 +119,34 @@
 
         this.updateLanguageText = () => {
             this.speakCancel();
-            let tmp = this.selectedLanguage[0];
-            let lang = tmp.lang;
+            //let tmp = 'it';//this.selectedLanguage[0];
+            //let lang = tmp.lang;
+            let selectedLang = this.selectedLanguage[0];
+            let lang = selectedLang.lang;
 
-            getLangLinks(getDefaultName(), 1, lang).then((data) => {
-                let itr = data['data']['query']['pages'];
-                angular.forEach(itr, (key, value) => {
-                    if((key.langlinks === null || key.langlinks === undefined) && (lang !== MapService.defaultLangWikipedia || value === "-1")){
-                        console.log("error!");
-                        updateText(getDefaultName(), null);
-                        return;
-                    }
-                    let title;
-                    if(lang !== MapService.defaultLangWikipedia){
-                        lang = key.langlinks[0]['lang'];
-                        title = key.langlinks[0]['*'];
-                    } else {
-                        title = this.poiObj.name;
-                    }
-                    getPageText(lang, title, this.numSentences).then((data) => {
-                        angular.forEach(data['data']['query']['pages'], (key, value) => {
-                            let title = key.title;
-                            let extract = key.extract;
+            MapService.getPoiDefaultName(this.poiObj.geoloc).then((name) => {
+                getLangLinks(name[1], 1, lang, name[0]).then((data) => {
+                    let itr = data['data']['query']['pages'];
+                    angular.forEach(itr, (key, value) => {
+                        if((key.langlinks === null || key.langlinks === undefined) && (lang !== name[0] || value === "-1")){
+                            console.log("error!");
+                            updateText(name[1], null);
+                            return;
+                        }
+                        let title;
+                        if(lang !== name[0]){
+                            lang = key.langlinks[0]['lang'];
+                            title = key.langlinks[0]['*'];
+                        } else {
+                            title = name[1];
+                        }
+                        getPageText(lang, title, this.numSentences).then((data) => {
+                            angular.forEach(data['data']['query']['pages'], (key, value) => {
+                                let title = key.title;
+                                let extract = key.extract;
 
-                            updateText(title, extract);
+                                updateText(title, extract);
+                            });
                         });
                     });
                 });
@@ -229,8 +214,8 @@
             this.text = text;
         };
 
-        const getPageImages = function (pageTitle, imageSize) {
-            return MapService.getPageImages(pageTitle, imageSize).then(function (data) {
+        const getPageImages = function (lang, pageTitle, imageSize) {
+            return MapService.getPageImages(lang, pageTitle, imageSize).then(function (data) {
                 console.log(data);
                 return data;
             }).catch(function (error) {
@@ -239,8 +224,8 @@
             });
         };
 
-        const getLangLinks = function (pageTitle, linkLimits, lang, pageContinue) {
-            return MapService.getLangLinks(pageTitle, linkLimits,lang, pageContinue).then(function (data) {
+        const getLangLinks = function (pageTitle, linkLimits, lang, baseLang,pageContinue) {
+            return MapService.getLangLinks(pageTitle, linkLimits,lang, baseLang, pageContinue).then(function (data) {
                 console.log(data);
                 return data;
             }).catch(function (error) {
@@ -261,26 +246,27 @@
 
          const showPoi = (idPoi, addToCache) => {
              this.poiObj = PoiService.getPoi(idPoi);
-             if(addToCache){
-                 PoiService.addToCache(this.poiObj);
-             }
-             PlayerService.initClipList(idPoi);
-             getPageImages(this.poiObj.name, getSidenavWidth()).then(function (data) {
-                 angular.forEach(data['data']['query']['pages'], function (value, key){
-                     let image = value['thumbnail'];
-                     let link, height;
-                     if(image){
-                         link = value['thumbnail']['source'];
-                         height = value['thumbnail']['height'];
-                     } else {
-                         link = "../common/assets/jpg/image-not-available.jpg";
-                         height = 400;
-                     }
+             this.clickedWhereIam = false;
 
-                     updateImgAttr(link, height);
+             PlayerService.initClipList(idPoi);
+             MapService.getPoiDefaultName(this.poiObj.geoloc).then((name) => {
+                 getPageImages(name[0], name[1], getSidenavWidth()).then(function (data) {
+                     angular.forEach(data['data']['query']['pages'], function (value, key){
+                         let image = value['thumbnail'];
+                         let link, height;
+                         if(image){
+                             link = value['thumbnail']['source'];
+                             height = value['thumbnail']['height'];
+                         } else {
+                             link = "../common/assets/jpg/image-not-available.jpg";
+                             height = 400;
+                         }
+
+                         updateImgAttr(link, height);
+                     });
                  });
+                 this.updateLanguageText();
              });
-             this.updateLanguageText();
          };
 
          const stopPlayer = () => {
@@ -310,7 +296,7 @@
              if(!this.isOpenSidenav()){
                  this.toggleLeft(null)
              }
-            this.playFirst();
+            this.playWhat();
          });
 
         $scope.$on('wai.poiservice.item', (event, item, directions) => {

@@ -23,7 +23,7 @@
                 </ng-youtube-embed>
             </div>
 
-            <div layout="column" layout-align="start start" id="filterMenu">
+            <!--<div layout="column" layout-align="start start" id="filterMenu">
 
                 <div layout="row" class="filterItem">
                     <label for="purpose">Purpose: </label>
@@ -92,12 +92,18 @@
                             helper-elements="reset">
                     </isteven-multi-select>
                 </div>
-            </div>
+            </div> -->
         </div>
         <div layout="row" layout-align="space-between center">
-            <md-button ng-click="dtlCtrl.playFirst()" class="md-accent" id="prova">Where M I?</md-button>
-            <md-button ng-click="dtlCtrl.playMore()" class="md-accent">More</md-button>
+            <md-button ng-click="dtlCtrl.playLess()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">Less</md-button>
+            <md-button ng-click="dtlCtrl.playWhat()" class="md-accent" ng-disabled="dtlCtrl.clickedWhereIam">Where M I?</md-button>
+            <md-button ng-click="dtlCtrl.playMore()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">More</md-button>
         </div>
+
+        <div layout="row" layout-align="center center">
+            <md-button ng-click="dtlCtrl.playHow()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">How</md-button>
+        </div>
+
         <div layout="row" layout-align="space-between center">
             <md-button ng-click="dtlCtrl.startRouting()">Indications</md-button>
             <isteven-multi-select
@@ -124,6 +130,20 @@
                     Stop
                 </md-button>
             </div>
+        </div>
+
+        <div layout="row" class="filterItem">
+            <label for="language">Language: </label>
+            <isteven-multi-select
+                    id="language"
+                    input-model="dtlCtrl.languageClip"
+                    output-model="dtlCtrl.selectedLanguage"
+                    button-label="name"
+                    item-label="name"
+                    selection-mode="single"
+                    tick-property="selected"
+                    on-item-click="dtlCtrl.updateLanguageText()">
+            </isteven-multi-select>
         </div>
 
         <div layout="row" layout-align="space-between center">

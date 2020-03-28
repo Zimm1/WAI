@@ -2,17 +2,13 @@
     angular.module('map')
         .service('MapService', MapService);
 
-        function MapService($http) {
+        function MapService($http, PoiService) {
 
-            this.defaultLangWikipedia = 'it';
-
+            const baseUriOverpassApi = 'https://overpass-api.de/api/interpreter';
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
-            const wikipediaBaseUri = `https://${this.defaultLangWikipedia}.wikipedia.org`;
-            const poiUri = "/api/poi";
 
-            let allVideos = new Array();
-            let clips = new Array();
-            let olc = '8FPHF8VV+57'
+            let allVideos = [];
+            let clips = [];
 
             function pushClips(){
                 for (const item of allVideos) {
@@ -28,7 +24,6 @@
                         detail: info.length >=6 ? info[5] : null
                     };
                     clips.push(dict);
-                    //return clips;
                 }
             }
 
@@ -68,8 +63,10 @@
                             console.log("c==2")
                         } else if (allVideos.length>=100){
                             pushClips();
+                            PoiService.createListPoiFromClips(clips);
                         } else if (!response.nextPageToken && allVideos.length<100){
                             pushClips();
+                            PoiService.createListPoiFromClips(clips);
                         }
                         finished();
                     }
@@ -80,23 +77,21 @@
             }
 
 
-            this.getAllClip = function (idPoi){
+            this.loadClipFromYoutube = (olc) => {
                 return new Promise(function (resolve, reject){
-
-                        gapi.client.setApiKey('AIzaSyAheW9XONTci7lXmP_96UE-zYL0J2-wcCE');
-                        gapi.client.load('youtube', 'v3', function() {
-                            GatherVideos("", function() {
-                                console.log(clips);
+                    gapi.client.setApiKey('AIzaSyAheW9XONTci7lXmP_96UE-zYL0J2-wcCE');
+                    gapi.client.load('youtube', 'v3', function() {
+                        GatherVideos("", function() {
+                            console.log(clips);
                             }, olc);
-                        });
-
+                    });
                 })
             };
 
-            this.getPoiUserPosition = function (lat, lng, page, limit){
-                return new Promise(function (resolve, reject){
+            const getPoiInfo = function (placeIdOsm, placeTag) {
+                return new Promise((resolve, reject) => {
                     $http({
-                        url: `${poiUri}?lat=${lat}&lng=${lng}&page=${page}&limit=${limit}&clips=false`,
+                        url: `${baseUriOverpassApi}?data=[out:json];${placeTag}(${placeIdOsm});out;`,
                         method: 'GET'
                     }).then(function successCallback(response){
                         resolve(response);
@@ -104,13 +99,43 @@
                         reject(response);
                     });
                 })
-            };
+            }
 
-            this.getPageImages = function (pageTitle, imageSize) {
+
+            const getPoiName = function (lat,lng) {
+                return new Promise(function (resolve, reject) {
+                    $http({
+                        url: `${baseUriNominatim}/reverse?lat=${lat}&lon=${lng}&format=json`,
+                        method: 'GET'
+                    }).then(function successCallback(response){
+                        resolve(response);
+                    }, function errorCallback(response){
+                        reject(response);
+                    });
+                });
+            }
+
+            this.getPoiDefaultName = (olc) => {
+                let pos = OpenLocationCode.decode(olc);
+                return getPoiName(pos.latitudeCenter, pos.longitudeCenter).then((data) => {
+                    let idOsm = data['data']['osm_id'];
+                    let tagOsm = data['data']['osm_type'];
+                    return getPoiInfo(idOsm, tagOsm).then((data) => {
+                        console.log(data);
+                        let item = data['data']['elements'][0];
+                        if (item) {
+                            let wikipediaTags = item['tags']['wikipedia'];
+                            return wikipediaTags.split(':');
+                        }
+                    });
+                });
+            }
+
+            this.getPageImages = function (lang, pageTitle, imageSize) {
                 let encodedString = encodeURIComponent(pageTitle).replace(/%20/g, "+");
                 return new Promise(function (resolve, reject){
                     $http({
-                        url: `${wikipediaBaseUri}/w/api.php?action=query&format=json&prop=pageimages&titles=${encodedString}&pithumbsize=${imageSize}&format=json&origin=*`,
+                        url: `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&titles=${encodedString}&pithumbsize=${imageSize}&format=json&origin=*`,
                         method: 'GET'
                     }).then(function successCallback(response){
                         resolve(response);
@@ -133,7 +158,7 @@
                 });
             };
 
-            this.getLangLinks = function (pageTitle, linksLimit, lang, pageContinue){
+            this.getLangLinks = function (pageTitle, linksLimit, lang, baseLang, pageContinue){
                 let encodedString = encodeURIComponent(pageTitle).replace(/%20/g, "+");
                 return new Promise(function (resolve, reject) {
                     let langParam = undefined,
@@ -145,7 +170,7 @@
                         continueParam = `&llcontinue=${pageContinue}`;
                     }
                     $http({
-                        url: `${wikipediaBaseUri}/w/api.php?action=query&format=json&prop=langlinks&titles=${encodedString}${langParam || continueParam}&lllimit=${linksLimit}&origin=*`,
+                        url: `https://${baseLang}.wikipedia.org/w/api.php?action=query&format=json&prop=langlinks&titles=${encodedString}${langParam || continueParam}&lllimit=${linksLimit}&origin=*`,
                         method: `GET`
                     }).then(function successCallback(response) {
                         resolve(response);
