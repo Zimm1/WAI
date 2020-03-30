@@ -1,23 +1,80 @@
 (function () {
     'use strict';
     angular.module('app')
-        .controller('DemoController', function ($scope, $timeout, $http, $localStorage, $mdToast) {
-            console.log("Loaded");
+        .controller('DemoController', function ($scope, $timeout, $http, $localStorage, $mdToast, $rootScope, leafletData) {
+            const map = leafletData.getMap('editor');
 
-            this.getPoiUserPosition = function (page, limit){
-                return new Promise(function (resolve, reject){
-                    $http({
-                        url: `/api/poi?page=${page}&limit=${limit}&clips=false`,
-                        method: 'GET'
-                    }).then(function successCallback(response){
-                        resolve(response);
-                    }, function errorCallback(response){
-                        reject(response);
-                    });
-                })
+            let selectedPlaceMarker;
+            this.center = {};
+
+            this.defaults = {
+                maxZoom: 18,
+                minZoom: 2,
+                scrollWheelZoom: true,
+                doubleClickZoom: false,
+                zoomControlPosition: 'bottomright'
+            };
+            this.events = {
+                map: {
+                    enable: ['zoomstart', 'drag', 'click', 'mousemove'],
+                    logic: 'emit'
+                }
             };
 
-            $scope.listId = [];
+            this.updateMarker = (latLng) =>  {
+                map.then(map => {
+                    if(selectedPlaceMarker) {
+                        map.removeLayer(selectedPlaceMarker);
+                    }
+
+                    let redIcon = new L.Icon({
+                        iconUrl: '../common/assets/png/marker-icon-red.png',
+                        shadowUrl: '../common/assets/png/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    });
+
+                    // Marker
+                    const markerLocation = new L.LatLng(latLng.lat, latLng.lng);
+                    const markerOptions = {
+                        icon: redIcon,
+                        draggable: 'true'
+                    };
+                    selectedPlaceMarker = L.marker(markerLocation, markerOptions);
+
+                    selectedPlaceMarker.on('dragend', () => {
+                        let latLng = selectedPlaceMarker.getLatLng();
+                        $scope.olc =  OpenLocationCode.encode(latLng.lat.toFixed(6), latLng.lng.toFixed(6));
+                    });
+
+                    map.addLayer(selectedPlaceMarker);
+                });
+            }
+
+            $scope.updateDetailValue = () => {
+                if($scope.purp !== 'why') {
+                    $scope.det = null;
+                }
+            }
+
+            $rootScope.$on('leafletDirectiveMap.editor.click', (data, wrap) => {
+                let latLng = wrap.leafletEvent.latlng;
+                this.updateMarker(latLng);
+                $scope.olc =  OpenLocationCode.encode(latLng.lat.toFixed(6), latLng.lng.toFixed(6));
+                console.log($scope.olc);
+            });
+
+            /*
+                           North (+90)
+                               |
+                (-180) West ———+——— East (+180)
+                               |
+                             South (-90)
+            * */
+            this.mybounds = {'northEast': {'lat': 90, 'lng': 180},'southWest': {'lat': -90, 'lng': -180}};
+
             $scope.myFile = null;
             $scope.purp = null;
             $scope.lan = null;
@@ -25,11 +82,7 @@
             $scope.adnc = null;
             $scope.det = null;
             $scope.selectedId = null;
-            this.getPoiUserPosition(0,20)
-                .then((data)=>{
-                    let item = data['data']['data'];
-                    $scope.listId=item;
-                })
+            $scope.olc = null;
 
             const showToast = (message) => {
                 $mdToast.show(
@@ -40,14 +93,36 @@
                 );
             };
 
+            const createOlcGeneralToDetail = (olc) => {
+                let firstLevel = olc.substring(0, olc.length-2);
+                let secondLevel = firstLevel.substring(0, firstLevel.length-3) + '00+';
+                return secondLevel + '-' + firstLevel + '-' + olc;
+            }
+
+            const generateDescription = () => {
+                let geoloc = createOlcGeneralToDetail($scope.olc);
+                let purpose = $scope.purp;
+                let language = $scope.lan;
+                let content = $scope.cont;
+                let audience = $scope.adnc;
+                let detail = $scope.det;
+
+                let desc = geoloc + ':' + purpose + ':' + language + ':' + content + ':' + audience;
+
+                if(purpose === 'why')
+                    desc = desc + ':' + detail;
+                return desc
+            }
+
             $scope.submit=function() {
-                var d = new Date();
-                var fileName;
+                let d = new Date();
+                let fileName;
                 fileName = 'audio_recording_' + d.getTime().toString() + ".mp3";
 
-                var formData = new FormData();
-                var request = new XMLHttpRequest();
-                var blob = $scope.recorded;
+                let formData = new FormData();
+                let request = new XMLHttpRequest();
+                let blob = $scope.recorded;
+                let description = generateDescription();
               //  var blob = new Blob([$scope.upFile], { type: "audio/mp3"});
 
                 formData.append("audio", blob, fileName);
@@ -56,7 +131,8 @@
                 formData.append("content", $scope.cont);
                 formData.append("audience", $scope.adnc);
                 formData.append("detail", $scope.det);
-                formData.append("poi", $scope.selectedId);
+                formData.append("geoloc", $scope.olc);
+                formData.append("desc", description);
 
                 request.open("POST", "/api/clip", true);
                 request.setRequestHeader("Authorization", ($localStorage.currentUser ? ("Bearer " + $localStorage.currentUser.token) : ''));
@@ -71,6 +147,14 @@
                             showToast(response.message);
                         } else {
                             showToast("Clip uploaded successfully");
+                            $scope.myFile = null;
+                            $scope.purp = null;
+                            $scope.lan = null;
+                            $scope.cont = null;
+                            $scope.adnc = null;
+                            $scope.det = null;
+                            $scope.selectedId = null;
+                            $scope.olc = null;
                         }
                     }
                 };
