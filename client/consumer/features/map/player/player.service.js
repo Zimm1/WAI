@@ -18,6 +18,7 @@
         this.whereIam = (poiGeoloc) => {
             if(poiGeoloc === this.poiGeoloc) {
                 this.clickedWhereIam = true;
+                this.detail = 0;
                 for(let clip of this.listClip) {
                     if(clip.purpose.toLowerCase() === 'what'){
                         return clip.url;

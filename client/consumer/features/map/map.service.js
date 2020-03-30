@@ -9,11 +9,23 @@
 
             let allVideos = [];
             let clips = [];
+            let loadedClip = new Set();
 
             function pushClips(){
                 for (const item of allVideos) {
                     const description = item.snippet.description;
                     const info = description.split(':');
+                    if (info[0].indexOf('-') !== -1){
+                        const geol = info[0].split('-');
+                        info[0] = geol[2];
+                    }
+                    let det = 0;
+                    if(info.length >= 6){
+                        det = parseInt(info[5].substring(0,1));
+                        if (det){
+                            info[5]=det;
+                        }
+                    }
                     const dict = {
                         url: "https://www.youtube.com/watch?v=".concat(item.id.videoId),
                         geoloc: info.length >= 1 ? info[0] : null,
@@ -21,22 +33,16 @@
                         language: info.length >=3 ? info[2] : null,
                         content: info.length >=4 ? info[3] : null,
                         audience: info.length >=5 ? info[4] : null,
-                        detail: info.length >=6 ? info[5] : null
+                        detail: info.length >=6 ? det : null
                     };
-                    clips.push(dict);
+
+                    if(!loadedClip.has(dict.url)){
+                        clips.push(dict);
+                        loadedClip.add(dict.url);
+                    }
                 }
             }
 
-            function arrayUnique(array) {
-                var a = array.concat();
-                for(var i=0; i<a.length; ++i) {
-                    for(var j=i+1; j<a.length; ++j) {
-                        if(a[i].snippet.description === a[j].snippet.description)
-                            a.splice(j--, 1);
-                    }
-                }
-                return a;
-            }
             let c=0
             function GatherVideos(pageToken, finished, olc) {
                 var request = gapi.client.youtube.search.list({
@@ -47,7 +53,7 @@
                 });
 
                 request.execute(function(response) {
-                    allVideos = arrayUnique(allVideos.concat(response.items));
+                    allVideos = allVideos.concat(response.items);
                     console.log(olc)
                     if (!response.nextPageToken||allVideos.length>=100){
                         if (allVideos.length<100 && c==0){
@@ -76,10 +82,21 @@
 
             }
 
+            var olcVect = ['2', '3', '4', '5', '6','7', '8', '9', 'C', 'F', 'G', 'H', 'J', 'M', 'P', 'Q', 'R', 'V', 'W', 'X'],
+                coordVect = [[-1, 1], [-1, 0], [-1, -1],[0, 1],[0, -1],[1, 1],[1, 0],[1, -1]];
 
             this.loadClipFromYoutube = (olc) => {
                 return new Promise(function (resolve, reject){
-                    gapi.client.setApiKey('AIzaSyAheW9XONTci7lXmP_96UE-zYL0J2-wcCE');
+                    loadedClip.clear();
+                    allVideos = [];
+                    clips = [];
+                    c = 0;
+                    let center = olc.substring(0, olc.length - 2);
+                    let nearRect = [
+
+                    ];
+
+                    gapi.client.setApiKey('AIzaSyAMCVRGiKKCyWQJ_I9FQMjTRZA6CCaE8K8');
                     gapi.client.load('youtube', 'v3', function() {
                         GatherVideos("", function() {
                             console.log(clips);

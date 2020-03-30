@@ -150,10 +150,9 @@
                 });
 
                 map.addLayer(userMarker);
-                if(PoiService.isEmpty()){
-                    let olc = OpenLocationCode.encode(lat, lng);
-                    MapService.loadClipFromYoutube(olc);
-                }
+
+                let olc = OpenLocationCode.encode(lat, lng);
+                MapService.loadClipFromYoutube(olc);
             });
         };
 
@@ -282,18 +281,20 @@
                 L.AwesomeMarkers.Icon.prototype.options.prefix = 'fa';
                 for(let item of listPOI){
                     let cat = PoiService.getCategoryPoi(item.geoloc);
-                    let loc = OpenLocationCode.decode(item.geoloc);
+                    if(OpenLocationCode.isValid(item.geoloc)) {
+                        let loc = OpenLocationCode.decode(item.geoloc);
 
-                    let marker = L.marker([loc.latitudeCenter, loc.longitudeCenter], {icon: createAwesomeIcon(cat)});
+                        let marker = L.marker([loc.latitudeCenter.toFixed(6), loc.longitudeCenter.toFixed(6)], {icon: createAwesomeIcon(cat)});
 
-                    marker.idPoi = item.geoloc;
+                        marker.idPoi = item.geoloc;
 
-                    marker.on('click', function (e) {
-                        $rootScope.$broadcast('wai.detail.toggle', this.idPoi);
-                    });
+                        marker.on('click', function (e) {
+                            $rootScope.$broadcast('wai.detail.toggle', this.idPoi);
+                        });
 
-                    map.addLayer(marker);
-                    poiMarkers.push(marker);
+                        map.addLayer(marker);
+                        poiMarkers.push(marker);
+                    }
                 }
                 bindMarkerPopUp(0);
             });

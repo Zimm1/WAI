@@ -5,9 +5,6 @@
     function PoiService($rootScope) {
         this.listPoi = [];
         this.cachePoi = [];
-        this.page = 0;
-        this.limit = 20;
-        this.count = 0;
         this.iconObj = {
             nat: {
                 icon: 'leaf',
@@ -84,9 +81,9 @@
             for(let clip of clipList) {
                 let found = false;
                 for(let i = 0; i < this.listPoi.length; i++){
-                    if(clip.geoloc.length > 11){
+                    /*if(clip.geoloc.length > 11){
                         clip.geoloc = clip.geoloc.substring(0, 11);
-                    }
+                    }*/
                     if(clip.geoloc === this.listPoi[i].geoloc){
                         this.listPoi[i].clips.push(clip);
                         found = true;
@@ -163,26 +160,31 @@
 
         this.nextPoi = (poi) => {
             this.addToCache(poi);
-            if(!calculateNextPoi(poi.geoloc)) {
+            if(!calculateNextPoi(poi.geoloc, 0)) {
                 this.removeFromCache(poi);
             }
         }
 
-        const calculateNextPoi = (olc) => {
-            if(olc.length <= 4) {
+        const calculateNextPoi = (olc, level) => {
+            if(level > 2) {
                 return false;
             }
-            let newLength = olc.length - 1;
-            let newOlc = olc.substring(0, newLength);
 
             for(let item of this.listPoi){
-                if(item.geoloc.includes(newOlc) && !this.hasPoi(item)){
+                if(item.geoloc.includes(olc) && !this.hasPoi(item)){
                     $rootScope.$broadcast('wai.poiservice.item', item.geoloc, true);
                     return true;
                 }
             }
 
-            return calculateNextPoi(newOlc);
+            let newOlc = '';
+
+            if(level === 0) {
+                newOlc = olc.substring(0, olc.length - 2);
+            } else {
+                newOlc = olc.substring(0, olc.length - 3) + '00+';
+            }
+            return calculateNextPoi(newOlc, ++level);
         }
 
         this.previousPoi = () => {
