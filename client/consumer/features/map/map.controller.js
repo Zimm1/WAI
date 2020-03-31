@@ -19,7 +19,6 @@
         let userMarker;
         let myRoute;
         let poiMarkers = [];
-        let isWatching = false;
 
         this.center = {};
         this.defaults = {
@@ -61,20 +60,17 @@
             let coord = new L.LatLng(tmpCoord.latitudeCenter, tmpCoord.longitudeCenter);
             updateRoute(userMarker.getLatLng(), coord, mode);
 
-            if(!isWatching){
-                isWatching = true;
-                getLocation(true);
-            }
+            //getLocation();
         });
 
         $scope.$on('wai.map.stopdirection', (event) => {
            clearRoute();
         });
 
-        const getLocation = (watch) => {
+        const getLocation = () => {
             map.then((map) => {
                 map
-                    .locate({setView: true, enableHighAccuracy: true, watch: watch, maximumAge: 15000})
+                    .locate({setView: true, enableHighAccuracy: true})
                     .on('locationfound', (e) => {
                         updateUserPosition(e.latlng.lat, e.latlng.lng);
                         map.invalidateSize();
@@ -261,11 +257,6 @@
         const clearRoute = () => {
             myRoute.setWaypoints([]);
             myRoute.hide();
-
-            map.then((map) => {
-                map.stopLocate();
-                isWatching = false;
-            });
         };
 
         const createAwesomeIcon = (cat) => {

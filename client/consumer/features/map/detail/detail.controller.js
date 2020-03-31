@@ -2,7 +2,7 @@
     angular.module('map')
         .controller('DetailController', DetailController);
 
-    function DetailController($scope, $mdSidenav, $rootScope,MapService, ngYoutubeEmbedService, PoiService, PlayerService) {
+    function DetailController($scope, $mdSidenav, $rootScope, $mdToast, MapService, ngYoutubeEmbedService, PoiService, PlayerService) {
         this.whiteframe = 4;
         this.numSentences = 5;
         this.poiObj = {};
@@ -23,11 +23,20 @@
         this.videoID = "";
         this.synth = null;
         this.clickedWhereIam = false;
+
+        const showToast = (message) => {
+            $mdToast.show(
+                $mdToast.simple()
+                    .textContent(message)
+                    .position('top center')
+                    .hideDelay(3000)
+            );
+        };
         
         this.toggleLeft = (item) => {
             $mdSidenav('detailSidenav').toggle().then(function (data) {
                 if(item != null){
-                    showPoi(item, true);
+                    showPoi(item);
                 }
             });
         };
@@ -46,24 +55,6 @@
 
         this.previousPoi = () => {
             PoiService.previousPoi();
-        };
-
-        const getOnlyName = (items) => {
-            let tmp = [];
-            for(let i = 0; i < items.length; i++){
-                let item = items[i];
-                tmp.push(item.name);
-            }
-            return tmp;
-        };
-
-        const getValueDetail = (items) => {
-            let tmp = [];
-            for(let i = 0; i < items.length; i++){
-                let item = items[i];
-                tmp.push(item.value);
-            }
-            return tmp;
         };
 
         const getSidenavWidth = () => {
@@ -122,29 +113,32 @@
             let selectedLang = this.selectedLanguage[0];
             let lang = selectedLang.lang;
 
-            MapService.getPoiDefaultName(this.poiObj.geoloc).then((name) => {
-                getLangLinks(name[1], 1, lang, name[0]).then((data) => {
-                    let itr = data['data']['query']['pages'];
-                    angular.forEach(itr, (key, value) => {
-                        if((key.langlinks === null || key.langlinks === undefined) && (lang !== name[0] || value === "-1")){
-                            console.log("error!");
-                            updateText(name[1], null);
-                            return;
-                        }
-                        let title;
-                        if(lang !== name[0]){
-                            lang = key.langlinks[0]['lang'];
-                            title = key.langlinks[0]['*'];
-                        } else {
-                            title = name[1];
-                        }
-                        getPageText(lang, title, this.numSentences).then((data) => {
-                            angular.forEach(data['data']['query']['pages'], (key, value) => {
-                                let title = key.title;
-                                let extract = key.extract;
+            if(!lang || !this.poiObj.name || !this.poiObj.lang) {
+                showToast('Error!');
+                return;
+            }
 
-                                updateText(title, extract);
-                            });
+            getLangLinks(this.poiObj.name, 1, lang, this.poiObj.lang).then((data) => {
+                let itr = data['data']['query']['pages'];
+                angular.forEach(itr, (key, value) => {
+                    if((key.langlinks === null || key.langlinks === undefined) && (lang !== this.poiObj.lang || value === "-1")){
+                        console.log("error!");
+                        updateText(this.poiObj.name, null);
+                        return;
+                    }
+                    let title;
+                    if(lang !== this.poiObj.lang){
+                        lang = key.langlinks[0]['lang'];
+                        title = key.langlinks[0]['*'];
+                    } else {
+                        title = this.poiObj.name;
+                    }
+                    getPageText(lang, title, this.numSentences).then((data) => {
+                        angular.forEach(data['data']['query']['pages'], (key, value) => {
+                            let title = key.title;
+                            let extract = key.extract;
+
+                            updateText(title, extract);
                         });
                     });
                 });
@@ -242,14 +236,16 @@
             });
         };
 
-         const showPoi = (idPoi, addToCache) => {
+         const showPoi = (idPoi) => {
              this.poiObj = PoiService.getPoi(idPoi);
              this.clickedWhereIam = false;
 
              PlayerService.initClipList(idPoi);
              MapService.getPoiDefaultName(this.poiObj.geoloc).then((name) => {
-                 getPageImages(name[0], name[1], getSidenavWidth()).then(function (data) {
-                     angular.forEach(data['data']['query']['pages'], function (value, key){
+                 this.poiObj.lang = name[0];
+                 this.poiObj.name = name[1];
+                 getPageImages(this.poiObj.lang, this.poiObj.name, getSidenavWidth()).then((data) => {
+                     angular.forEach(data['data']['query']['pages'], (value, key) => {
                          let image = value['thumbnail'];
                          let link, height;
                          if(image){
@@ -264,6 +260,10 @@
                      });
                  });
                  this.updateLanguageText();
+             }).catch((error) => {
+                console.error(error);
+                showToast('Too Many Requests')
+                this.closeSidenav();
              });
          };
 
@@ -299,7 +299,7 @@
 
         $scope.$on('wai.poiservice.item', (event, item, directions) => {
             stopMedia();
-            showPoi(item,false);
+            showPoi(item);
             if(directions){
                 this.startRouting();
             }
@@ -312,7 +312,7 @@
             if(!this.isOpenSidenav()){
                 this.toggleLeft(item);
             } else {
-                showPoi(item,true);
+                showPoi(item);
             }
         });
     }
