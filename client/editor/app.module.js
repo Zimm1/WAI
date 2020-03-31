@@ -4,6 +4,7 @@
         .module('app', [
             'ngMaterial',
             'ngRoute',
+            'leaflet-directive',
             'auth',
             'toolbar',
             'users',

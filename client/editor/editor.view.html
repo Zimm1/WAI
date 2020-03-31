@@ -1,30 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>File Upload Demo</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-
-    <style>
-        canvas {
-            display: inline-block;
-            background: #202020;
-            width: 100%;
-            /*height: 45%;*/
-            box-shadow: 0px 0px 10px blue;
-        }
-
-        .float-rt {
-            float: right;
-        }
-
-    </style>
-
-</head>
-<body ng-app="app" ng-cloak="" style="font-family: sans-serif">
-<div ng-controller="DemoController">
-
+<div class="editor" ng-controller="DemoController as demoCntrl">
+    <leaflet id="editor" class="fill" center="demoCntrl.center" maxbounds="demoCntrl.mybounds" defaults="demoCntrl.defaults"></leaflet>
     <div ng-audio-recorder id="mainAudio" audio-model="recorded" class="container">
         <div ng-if="recorder.isAvailable">
 
@@ -32,7 +7,7 @@
 
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                    Nuova clip
+                        Nuova clip
                     </h3>
 
                     <div class="clearfix"></div>
@@ -109,85 +84,82 @@
         </div>
     </div>
 
-<form novalidate>
+    <form novalidate>
 
-    <label>Purpose:
-        <select ng-model="purp">
-        <option value="what">What</option>
-        <option value="how">How</option>
-        <option value="why">Why</option>
-        </select>
-    </label>
+        <label>Purpose:
+            <select ng-model="purp" ng-change="updateDetailValue()">
+                <option value="what">What</option>
+                <option value="how">How</option>
+                <option value="why">Why</option>
+            </select>
+        </label>
 
-    <br><br>
+        <br><br>
 
-    <label>Language:
-        <select ng-model="lan">
-            <option value="eng">Eng</option>
-            <option value="ita">Ita</option>
-        </select>
-    </label>
+        <label>Language:
+            <select ng-model="lan">
+                <option value="eng">Eng</option>
+                <option value="ita">Ita</option>
+            </select>
+        </label>
 
-    <br><br>
+        <br><br>
 
-    <label>Content:
-        <select ng-model="cont">
-            <option value="none">None</option>
-            <option value="nat">Nat</option>
-            <option value="art">Art</option>
-            <option value="his">His</option>
-            <option value="flk">Flk</option>
-            <option value="mod">Mod</option>
-            <option value="rel">Rel</option>
-            <option value="cul">Cul</option>
-            <option value="spo">Spo</option>
-            <option value="mus">Mus</option>
-            <option value="mov">Mov</option>
-            <option value="fas">Fas</option>
-            <option value="shp">Shp</option>
-            <option value="tec">Tec</option>
-            <option value="pop">Pop</option>
-            <option value="prs">Prs</option>
-            <option value="oth">Oth</option>
-        </select>
-    </label>
+        <label>Content:
+            <select ng-model="cont">
+                <option value="none">None</option>
+                <option value="nat">Nat</option>
+                <option value="art">Art</option>
+                <option value="his">His</option>
+                <option value="flk">Flk</option>
+                <option value="mod">Mod</option>
+                <option value="rel">Rel</option>
+                <option value="cul">Cul</option>
+                <option value="spo">Spo</option>
+                <option value="mus">Mus</option>
+                <option value="mov">Mov</option>
+                <option value="fas">Fas</option>
+                <option value="shp">Shp</option>
+                <option value="tec">Tec</option>
+                <option value="pop">Pop</option>
+                <option value="prs">Prs</option>
+                <option value="oth">Oth</option>
+            </select>
+        </label>
 
-    <br><br>
+        <br><br>
 
-    <label> Audience:
-        <select ng-model="adnc">
-            <option value="gen">Gen </option>
-            <option value="pre">Pre </option>
-            <option value="elm">Elm </option>
-            <option value="mid">Mid </option>
-            <option value="scl">Scl </option>
-        </select>
-    </label>
+        <label> Audience:
+            <select ng-model="adnc">
+                <option value="gen">Gen</option>
+                <option value="pre">Pre</option>
+                <option value="elm">Elm</option>
+                <option value="mid">Mid</option>
+                <option value="scl">Scl</option>
+                <option value="*">All</option>
+            </select>
+        </label>
 
-    <br><br>
+        <br><br>
 
-    <label>Detail:
-        <select ng-model="det">
-            <option value="0">Introduction </option>
-            <option value="1">Low detail </option>
-            <option value="2">Medium detail </option>
-            <option value="3">High detail </option>
-        </select>
-    </label>
+        <label>Detail:
+            <select ng-model="det" ng-disabled="purp !== 'why'">
+                <option value="1">Low detail </option>
+                <option value="2">Medium detail </option>
+                <option value="3">High detail </option>
+            </select>
+        </label>
 
-    <br><br>
+        <br><br>
 
-    <label>Scegli posto:
-        <select ng-model="selectedId">
-            <option ng-value="item.id" ng-repeat="item in listId">{{item.name}}</option>
-        </select>
-    </label>
+        <div ng-if="olc">
+            Location: {{olc}}
+        </div>
 
-    <br><br>
+        <br><br>
 
-    <button  ng-disabled="selectedId === null || det === null || adnc === null || cont === null || lan === null || purp === null" ng-click="submit()" class = "btn btn-primary">Upload File</button>
+        <button  ng-disabled="olc === null || (det === null && purp === 'why') || adnc === null || cont === null || lan === null || purp === null" ng-click="submit()" class = "btn btn-primary">Upload File</button>
 
-</form>
+    </form>
 </div>
-</body>
-</html>
+</div>
