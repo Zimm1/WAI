@@ -21,6 +21,12 @@
                 }
             };
 
+            const centerView = (latLng) => {
+                this.center.lat = latLng.lat;
+                this.center.lng = latLng.lng;
+                this.center.zoom = 10;
+            }
+
             this.updateMarker = (latLng) =>  {
                 map.then(map => {
                     if(selectedPlaceMarker) {
@@ -46,10 +52,12 @@
 
                     selectedPlaceMarker.on('dragend', () => {
                         let latLng = selectedPlaceMarker.getLatLng();
+                        centerView(latLng);
                         $scope.olc =  OpenLocationCode.encode(latLng.lat.toFixed(6), latLng.lng.toFixed(6));
                     });
 
                     map.addLayer(selectedPlaceMarker);
+                    centerView(latLng);
                 });
             }
 

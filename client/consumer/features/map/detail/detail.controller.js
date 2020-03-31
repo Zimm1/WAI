@@ -68,6 +68,7 @@
                 this.videoID = url;
             } else {
                 this.videoID = '';
+                showToast('Clip not found');
             }
         }
 
@@ -77,6 +78,7 @@
                 this.videoID = url;
             } else {
                 this.videoID = '';
+                showToast('Clip not found');
             }
         }
 
@@ -86,6 +88,7 @@
                 this.videoID = url;
             } else {
                 this.videoID = '';
+                showToast('Clip not found');
             }
         }
 
@@ -95,6 +98,7 @@
                 this.videoID = url;
             } else {
                 this.videoID = '';
+                showToast('Clip not found');
             }
         }
 
@@ -114,7 +118,7 @@
             let lang = selectedLang.lang;
 
             if(!lang || !this.poiObj.name || !this.poiObj.lang) {
-                showToast('Error!');
+                showToast('Loading...');
                 return;
             }
 
