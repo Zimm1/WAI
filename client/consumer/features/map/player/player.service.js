@@ -26,21 +26,21 @@
                 }
             }
             return null;
-        }
+        };
 
         this.moreDetail = (poiGeoloc) => {
-            if(poiGeoloc === this.poiGeoloc) {
-                if(this.detail < 3){
+            if (poiGeoloc === this.poiGeoloc) {
+                if (this.detail < 3) {
                     this.detail++;
                 }
-                for(let clip of this.listClip) {
+                for (let clip of this.listClip) {
                     if(clip.purpose.toLowerCase() === 'why' && this.detail === clip.detail) {
                         return clip.url;
                     }
                 }
             }
             return null;
-        }
+        };
 
         this.lessDetail = (poiGeoloc) => {
             if(poiGeoloc === this.poiGeoloc) {

@@ -3,7 +3,7 @@ const router = express.Router();
 
 const clipController = require('../controllers/clip.controller');
 
-
+/*
 router.get('/:id(\\d+)/',
     clipController.get
 );
@@ -15,7 +15,7 @@ router.put('/:id(\\d+)/',
 router.get('/',
     clipController.getAll
 );
-
+*/
 router.post('/',
     clipController.post
 );

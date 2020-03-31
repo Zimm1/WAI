@@ -20,6 +20,24 @@ function YoutubeUploader() {
     this.auth = null;
     this.currentCredential = 0;
 
+    const createOlcGeneralToDetail = (olc) => {
+        const firstLevel = olc.substring(0, olc.length-2);
+        const secondLevel = firstLevel.substring(0, firstLevel.length-3) + '00+';
+        return secondLevel + '-' + firstLevel + '-' + olc;
+    };
+
+    const generateDescription = (clip) => {
+        console.log(clip);
+        clip.geoloc = createOlcGeneralToDetail(clip.geoloc);
+        let desc = clip.geoloc + ':' + clip.purpose + ':' + clip.language + ':' + clip.content + ':' + clip.audience;
+
+        if (clip.purpose === 'why') {
+            desc = desc + ':' + clip.detail;
+        }
+
+        return desc;
+    };
+
     this._executeFfmpeg = args => {
         let command = ffmpeg().output(' ');
         command._outputs[0].isFile = false;
@@ -71,22 +89,23 @@ function YoutubeUploader() {
     };
     this._authenticate();
 
-    this._upload = (videoFileName) =>
+    this._upload = (videoData) =>
         new Promise((resolve, reject) => {
             logger.info("Upload started with credential " + ("0" + this.currentCredential).slice(-2));
 
             google.youtube({ version: 'v3', auth: this.auth }).videos.insert({
                 resource: {
                     snippet: {
-                        title: new Date().getTime()
+                        title: new Date().getTime(),
+                        description: videoData.description
                     },
                     status: {
-                        privacyStatus: "unlisted"
+                        privacyStatus: "public"
                     }
                 },
                 part: "snippet,status",
                 media: {
-                    body: fs.createReadStream(RESOURCES_PATH + videoFileName)
+                    body: fs.createReadStream(RESOURCES_PATH + videoData.fileName)
                 }
             }, (err, data) => {
                 if (err) {
@@ -101,11 +120,11 @@ function YoutubeUploader() {
             });
         });
 
-    this.upload = async (videoFileName, startingCredential=this.currentCredential) => {
+    this.upload = async (videoData, startingCredential=this.currentCredential) => {
         this._authenticate();
 
         try {
-            const uploadResult = await this._upload(videoFileName);
+            const uploadResult = await this._upload(videoData);
             return Promise.resolve(uploadResult);
         } catch (err) {
             try {
@@ -115,20 +134,24 @@ function YoutubeUploader() {
                     logger.error(message);
                     return Promise.reject(new Error(message));
                 }
-                return await this.upload(videoFileName, startingCredential);
+                return await this.upload(videoData, startingCredential);
             } catch (err) {
                 return Promise.reject(err);
             }
         }
     };
 
-    this.uploadAudio = async (audioFileName) => {
-        const videoFileName = await this._audio2video(audioFileName);
-        return this.upload(videoFileName)
+    this.uploadAudio = async (clip) => {
+        const videoData = {
+            fileName: await this._audio2video(clip.audio),
+            description: generateDescription(clip)
+        };
+
+        return this.upload(videoData)
             .then(uploadResult => YOUTUBE_VIDEO_URL + uploadResult.data.id)
             .finally(() => {
-                fs.unlink(RESOURCES_PATH + audioFileName, () => {});
-                fs.unlink(RESOURCES_PATH + videoFileName, () => {});
+                fs.unlink(RESOURCES_PATH + clip.audio, () => {});
+                fs.unlink(RESOURCES_PATH + videoData.fileName, () => {});
             });
     };
 }

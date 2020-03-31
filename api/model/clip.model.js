@@ -6,11 +6,15 @@ module.exports = {
         editor: {
             type: Number,
             ref: "user",
-            required: true
+            // required: true,
+            required: false
         },
         poi: {
             type: Number,
             ref: "poi"
+        },
+        geoloc: {
+            type: String
         },
         audio: {
             type: String,
@@ -37,6 +41,7 @@ module.exports = {
             required: true,
         }
     },
+    /*
     init: [
         {
             "_id": 0,
@@ -479,4 +484,5 @@ module.exports = {
             "detail": 2
         }
     ]
+     */
 };

@@ -107,7 +107,7 @@ const post = [
         .role(authUtils.getRoles().ADMIN)
         .check(),
     upload.single('audio'),
-    body('poi', 'Poi id must be valid').optional().isInt({min: 0}),
+    body('geoloc', 'Geoloc id must be valid').optional().isString(),
     body('purpose', 'Purpose must be valid').optional().isString().custom(value =>
         CLIP_CONFIG.PURPOSE.includes(value)),
     body('language', 'Language must be valid').optional().isString().custom(value =>
@@ -121,24 +121,23 @@ const post = [
     expressUtils.checkValidation,
     async (req, res, next) => {
         try {
-            const audioLink = await YoutubeUploader.uploadAudio(req.file.filename);
-
-            let clip = new model.clip({
-                editor: req.user._id,
-                poi: req.body.poi,
-                audio: audioLink,
+            const clip = new model.clip({
+                geoloc: req.body.geoloc,
+                audio: req.file.filename,
                 purpose: req.body.purpose,
                 language: req.body.language,
                 content: req.body.content,
                 audience: req.body.audience,
                 detail: req.body.detail
             });
-        
 
-            clip = await clip.save();
-            res.status(201).send({
+            const audioLink = await YoutubeUploader.uploadAudio(clip);
+
+            res.status(200).send({
                 success: true,
-                data: clip
+                data: {
+                    audio: audioLink
+                }
             });
         } catch (e) {
             if (e.code === 11000 || e.code === 11001) {
@@ -151,13 +150,13 @@ const post = [
     }
 ];
 
+/*
 const put = [
     new authUtils.auth()
         .role(authUtils.getRoles().EDITOR)
         .role(authUtils.getRoles().ADMIN)
         .check(),
     upload.single('audio'),
-    body('poi', 'Poi id must be valid').optional().isInt({min: 0}),
     body('purpose', 'Purpose must be valid').optional().isString().custom(value =>
         CLIP_CONFIG.PURPOSE.includes(value)),
     body('language', 'Language must be valid').optional().isString().custom(value =>
@@ -167,7 +166,7 @@ const put = [
     body('audience', 'Audience must be valid').optional().isString().custom(value =>
         CLIP_CONFIG.AUDIENCE.includes(value)),
     body('detail', 'Detail must be valid').optional()
-        .isInt({min: 0, max: CLIP_CONFIG.DETAIL.MAX}),
+        .isInt({min: 1, max: CLIP_CONFIG.DETAIL.MAX}),
     expressUtils.checkValidation,
     (req, res, next) => {
         if (req.params.id == null) {
@@ -213,10 +212,11 @@ const put = [
             });
     }
 ];
+*/
 
 module.exports = {
-    getAll,
-    get,
+    //getAll,
+    //get,
     post,
-    put
+    //put
 };

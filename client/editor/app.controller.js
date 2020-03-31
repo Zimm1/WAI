@@ -93,27 +93,6 @@
                 );
             };
 
-            const createOlcGeneralToDetail = (olc) => {
-                let firstLevel = olc.substring(0, olc.length-2);
-                let secondLevel = firstLevel.substring(0, firstLevel.length-3) + '00+';
-                return secondLevel + '-' + firstLevel + '-' + olc;
-            }
-
-            const generateDescription = () => {
-                let geoloc = createOlcGeneralToDetail($scope.olc);
-                let purpose = $scope.purp;
-                let language = $scope.lan;
-                let content = $scope.cont;
-                let audience = $scope.adnc;
-                let detail = $scope.det;
-
-                let desc = geoloc + ':' + purpose + ':' + language + ':' + content + ':' + audience;
-
-                if(purpose === 'why')
-                    desc = desc + ':' + detail;
-                return desc
-            }
-
             $scope.submit=function() {
                 let d = new Date();
                 let fileName;
@@ -122,8 +101,6 @@
                 let formData = new FormData();
                 let request = new XMLHttpRequest();
                 let blob = $scope.recorded;
-                let description = generateDescription();
-              //  var blob = new Blob([$scope.upFile], { type: "audio/mp3"});
 
                 formData.append("audio", blob, fileName);
                 formData.append("purpose", $scope.purp);
@@ -132,7 +109,6 @@
                 formData.append("audience", $scope.adnc);
                 formData.append("detail", $scope.det);
                 formData.append("geoloc", $scope.olc);
-                formData.append("desc", description);
 
                 request.open("POST", "/api/clip", true);
                 request.setRequestHeader("Authorization", ($localStorage.currentUser ? ("Bearer " + $localStorage.currentUser.token) : ''));

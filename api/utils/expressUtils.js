@@ -9,6 +9,8 @@ const ERROR_CODES = {
 };
 
 function sendError(res, code, message) {
+    console.log(message);
+
     res.status(code).json({
         success: false,
         code: code,
