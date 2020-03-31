@@ -7,102 +7,168 @@
             const baseUriOverpassApi = 'https://overpass-api.de/api/interpreter';
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
 
-            let allVideos = [];
-            let clips = [];
-            let loadedClip = new Set();
+            const LEVELS = 3;
+            const ENOUGH_CLIPS = 100;
+            const OLC_CHARS = ['2', '3', '4', '5', '6','7', '8', '9', 'C', 'F', 'G', 'H', 'J', 'M', 'P', 'Q', 'R', 'V', 'W', 'X'];
+            const OLC_DIRECTIONS = [ [-1, 1], [-1, 0], [-1, -1], [0, 1], [0, -1], [1, 1], [1, 0], [1, -1] ];
 
-            function pushClips(){
-                for (const item of allVideos) {
+            let currentApiKey = 0;
+
+            const clips = new Map();
+
+            const loadYoutubeApi = () => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        gapi.load('client:auth2', resolve);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            };
+
+            const initYoutubeApi = () => {
+                return gapi.client.init({
+                    apiKey: YOUTUBE_API_KEYS[currentApiKey],
+                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
+                });
+            };
+
+            const searchYoutubeApi = (params) => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        gapi.client.youtube.search.list(params).execute(resolve);
+                    } catch (err) {
+                        reject(err);
+                    }
+                });
+            };
+
+            const changeApiKey = () => {
+                currentApiKey = (currentApiKey + 1 + YOUTUBE_API_KEYS.length) % YOUTUBE_API_KEYS.length;
+            };
+
+            const getNearOlcChar = (char, increment) => {
+                return OLC_CHARS[(OLC_CHARS.indexOf(char) + increment + OLC_CHARS.length) % OLC_CHARS.length];
+            };
+
+            const getOlcsAround = (olc) => {
+                const olcs = [ olc ];
+
+                OLC_DIRECTIONS.forEach(([x, y]) => {
+                    const newOlc = olc.split('');
+                    newOlc[olc.length - 2] = getNearOlcChar(olc[olc.length - 2], x);
+                    newOlc[olc.length - 1] = getNearOlcChar(olc[olc.length - 1], y);
+                    olcs.push(newOlc.join(''));
+                });
+
+                return olcs;
+            };
+
+            const getNearOlcsFromLevel = (olc, level) => {
+                if (level === 0) {
+                    return getOlcsAround(olc);
+                }
+
+                olc = olc.substring(0, olc.length - 3);
+                if (level === 1) {
+                    return getOlcsAround(olc)
+                        .map((o) => o + '+');
+                }
+
+                olc = olc.substring(0, olc.length - 2);
+                return getOlcsAround(olc)
+                    .map((o) => o + '00+');
+            };
+
+            const insertResponseClipItems = (items) => {
+                items.forEach((item) => {
+                    const id = item.id.videoId;
+
+                    if (clips.has(id)) {
+                        return;
+                    }
+
                     const description = item.snippet.description;
                     const info = description.split(':');
-                    if (info[0].indexOf('-') !== -1){
-                        const geol = info[0].split('-');
-                        info[0] = geol[2];
-                    }
-                    let det = 0;
-                    if(info.length >= 6){
-                        det = parseInt(info[5].substring(0,1));
-                        if (det){
-                            info[5]=det;
-                        }
-                    }
-                    const dict = {
+
+                    const clip = {
                         url: "https://www.youtube.com/watch?v=".concat(item.id.videoId),
                         geoloc: info.length >= 1 ? info[0] : null,
                         purpose: info.length >=2 ? info[1] : null,
                         language: info.length >=3 ? info[2] : null,
                         content: info.length >=4 ? info[3] : null,
                         audience: info.length >=5 ? info[4] : null,
-                        detail: info.length >=6 ? det : null
+                        detail: info.length >=6 ? info[5] : null
                     };
 
-                    if(!loadedClip.has(dict.url)){
-                        clips.push(dict);
-                        loadedClip.add(dict.url);
+                    if (clip.geoloc != null && clip.geoloc.indexOf('-') !== -1) {
+                        clip.geoloc = clip.geoloc.split('-').slice(-1).pop();
                     }
-                }
-            }
 
-            let c=0
-            function GatherVideos(pageToken, finished, olc) {
-                var request = gapi.client.youtube.search.list({
+                    if (clip.detail != null) {
+                        clip.detail = parseInt(clip.detail.substring(0, 1)) || clip.detail;
+                    }
+
+                    clips.set(id, clip);
+                });
+            };
+
+            const getClipsFromOlc = async (olc, pageToken) => {
+                console.log(`Youtube api request using key n.${currentApiKey}`);
+
+                const response = await searchYoutubeApi({
                     part: 'snippet',
                     q: olc,
                     maxResults: 50,
-                    pageToken: pageToken
+                    pageToken: pageToken || ""
                 });
 
-                request.execute(function(response) {
-                    allVideos = allVideos.concat(response.items);
-                    console.log(olc)
-                    if (!response.nextPageToken||allVideos.length>=100){
-                        if (allVideos.length<100 && c==0){
-                            olc = olc.substring(0, olc.length - 2)
-                            GatherVideos("", finished, olc);
-                            c=1
-                            console.log("c==1")
-                        } else if (allVideos.length<100 && c==1){
-                            tolc=olc.substring(0, olc.length - 1)
-                            olc=tolc.replace(tolc.substring(tolc.length - 2,tolc.length),"00+")
-                            GatherVideos("", finished, olc);
-                            c=2
-                            console.log("c==2")
-                        } else if (allVideos.length>=100){
-                            pushClips();
-                            PoiService.createListPoiFromClips(clips);
-                        } else if (!response.nextPageToken && allVideos.length<100){
-                            pushClips();
-                            PoiService.createListPoiFromClips(clips);
-                        }
-                        finished();
+                if (response.code === 403) {
+                    changeApiKey();
+                    await initYoutubeApi();
+                    await getClipsFromOlc(olc, pageToken);
+                    return;
+                }
+
+                insertResponseClipItems(response.items);
+
+                if (clips.size >= ENOUGH_CLIPS) {
+                    return;
+                }
+
+                pageToken = response.nextPageToken;
+                if (pageToken) {
+                    await getClipsFromOlc(olc, pageToken);
+                }
+            };
+
+            const getClipsFromOlcAndLevel = async (olc, level) => {
+                await loadYoutubeApi();
+                await initYoutubeApi();
+
+                for (const o of getNearOlcsFromLevel(olc, level)) {
+                    console.log(o);
+                    await getClipsFromOlc(o);
+
+                    if (clips.size >= ENOUGH_CLIPS) {
+                        return;
                     }
-                    else
-                        GatherVideos(response.nextPageToken, finished, olc);
-                });
+                }
 
-            }
+                ++level;
+                if (level < LEVELS) {
+                    await getClipsFromOlcAndLevel(olc, level);
+                }
+            };
 
-            var olcVect = ['2', '3', '4', '5', '6','7', '8', '9', 'C', 'F', 'G', 'H', 'J', 'M', 'P', 'Q', 'R', 'V', 'W', 'X'],
-                coordVect = [[-1, 1], [-1, 0], [-1, -1],[0, 1],[0, -1],[1, 1],[1, 0],[1, -1]];
+            this.getClips = async (olc) => {
+                clips.clear();
 
-            this.loadClipFromYoutube = (olc) => {
-                return new Promise(function (resolve, reject){
-                    loadedClip.clear();
-                    allVideos = [];
-                    clips = [];
-                    c = 0;
-                    let center = olc.substring(0, olc.length - 2);
-                    let nearRect = [
+                await getClipsFromOlcAndLevel(olc, 0);
 
-                    ];
+                console.log(`Number of clips found: ${clips.size}`);
 
-                    gapi.client.setApiKey('AIzaSyAMCVRGiKKCyWQJ_I9FQMjTRZA6CCaE8K8');
-                    gapi.client.load('youtube', 'v3', function() {
-                        GatherVideos("", function() {
-                            console.log(clips);
-                            }, olc);
-                    });
-                })
+                PoiService.createListPoiFromClips([...clips.values()]);
             };
 
             const getPoiInfo = function (placeIdOsm, placeTag, defaultName) {
@@ -117,8 +183,7 @@
                         reject(response);
                     });
                 })
-            }
-
+            };
 
             const getPoiName = function (lat,lng) {
                 return new Promise(function (resolve, reject) {

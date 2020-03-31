@@ -78,19 +78,23 @@
 
         this.createListPoiFromClips = (clipList) => {
             this.listPoi = [];
-            for(let clip of clipList) {
+
+            for (let clip of clipList) {
+                if (clip.geoloc) {
+                    clip.geoloc = clip.geoloc.substring(0, 11);
+                }
+
                 let found = false;
-                for(let i = 0; i < this.listPoi.length; i++){
-                    /*if(clip.geoloc.length > 11){
-                        clip.geoloc = clip.geoloc.substring(0, 11);
-                    }*/
-                    if(clip.geoloc === this.listPoi[i].geoloc){
+
+                for (let i = 0; i < this.listPoi.length; i++) {
+                    if (clip.geoloc === this.listPoi[i].geoloc) {
                         this.listPoi[i].clips.push(clip);
                         found = true;
                         break;
                     }
                 }
-                if(!found){
+
+                if (!found) {
                     let obj = {
                         geoloc: clip.geoloc,
                         clips: [
@@ -100,6 +104,7 @@
                     this.listPoi.push(obj);
                 }
             }
+
             $rootScope.$broadcast('wai.poiservice.showpoi');
         };
 

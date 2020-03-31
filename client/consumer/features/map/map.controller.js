@@ -152,7 +152,7 @@
                 map.addLayer(userMarker);
 
                 let olc = OpenLocationCode.encode(lat, lng);
-                MapService.loadClipFromYoutube(olc);
+                MapService.getClips(olc);
             });
         };
 

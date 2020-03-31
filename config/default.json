@@ -41,7 +41,7 @@
     }
   },
   "YOUTUBE": {
-    "N_CREDENTIALS": 12
+    "N_CREDENTIALS": 8
   },
   "EXPRESS": {
     "PORT": 8000
