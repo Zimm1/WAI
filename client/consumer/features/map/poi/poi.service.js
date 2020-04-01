@@ -3,7 +3,7 @@
         .service('PoiService', PoiService);
 
     function PoiService($rootScope) {
-        this.listPoi = [];
+        this.listPoi = new Map();
         this.cachePoi = [];
         this.iconObj = {
             nat: {
@@ -77,56 +77,42 @@
         };
 
         this.createListPoiFromClips = (clipList) => {
-            this.listPoi = [];
-
             for (let clip of clipList) {
                 if (clip.geoloc) {
                     clip.geoloc = clip.geoloc.substring(0, 11);
                 }
 
-                let found = false;
-
-                for (let i = 0; i < this.listPoi.length; i++) {
-                    if (clip.geoloc === this.listPoi[i].geoloc) {
-                        this.listPoi[i].clips.push(clip);
-                        found = true;
-                        break;
-                    }
+                if(!OpenLocationCode.isValid(clip.geoloc)){
+                    continue;
                 }
 
-                if (!found) {
+                if(!this.listPoi.has(clip.geoloc)) {
                     let obj = {
                         geoloc: clip.geoloc,
                         clips: [
                             clip
                         ]
                     };
-                    this.listPoi.push(obj);
+                    this.listPoi.set(clip.geoloc, obj);
+                } else {
+                    let poi = this.listPoi.get(clip.geoloc);
+                    poi.clips.push(clip);
+                    this.listPoi.set(clip.geoloc, poi);
                 }
             }
-
             $rootScope.$broadcast('wai.poiservice.showpoi');
         };
 
-        const updateList = (newList) => {
-            this.listPoi = newList;
-        };
+        this.clearMap = () => {
+            this.listPoi.clear();
+        }
 
         this.isEmpty = () => {
-            return this.listPoi.length === 0;
+            return this.listPoi.size === 0;
         };
 
         this.getPoi = (plusCode) => {
-            for(let item of this.listPoi){
-                if(plusCode === item.geoloc){
-                    return item;
-                }
-            }
-            return null;
-        };
-
-        this.getAllPoi = () => {
-            return this.listPoi;
+            return this.listPoi.get(plusCode);
         };
 
         this.addToCache = (poi) => {
@@ -135,14 +121,18 @@
             }
         };
 
+        this.getAllPoi = () => {
+            return this.listPoi.values();
+        };
+
         this.getCategoryPoi = (plusCode) => {
-            for(let item of this.listPoi){
-                if(item.geoloc === plusCode) {
-                    let listClip = item.clips;
-                    let catName = listClip[0]['content'];
-                    return this.iconObj[catName];
-                }
+            let poi = this.listPoi.get(plusCode);
+            if(poi){
+                let listClip = poi.clips;
+                let catName = listClip[0]['content'];
+                return this.iconObj[catName];
             }
+            return null;
         }
 
         this.hasPoi = (poi) => {
@@ -175,7 +165,7 @@
                 return false;
             }
 
-            for(let item of this.listPoi){
+            for(let item of this.listPoi.values()){
                 if(item.geoloc.includes(olc) && !this.hasPoi(item)){
                     $rootScope.$broadcast('wai.poiservice.item', item.geoloc, true);
                     return true;
@@ -196,7 +186,7 @@
             if(this.cachePoi.length > 0) {
                 let item = this.cachePoi.pop();
                 if(this.getPoi(item.geoloc) === null){
-                    this.listPoi.push(item);
+                    this.listPoi.set(item.geoloc, item);
                     $rootScope.$broadcast('wai.poiservice.showpoi', item.geoloc);
                 }
                 $rootScope.$broadcast('wai.poiservice.item', item.geoloc, true);

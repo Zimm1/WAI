@@ -58,7 +58,7 @@
         };
 
         const getSidenavWidth = () => {
-            return document.getElementById("sidenavDetail").clientWidth;
+            return document.getElementById("sidenavDetail").clientWidth - 14;
         };
 
         this.playWhat = () => {

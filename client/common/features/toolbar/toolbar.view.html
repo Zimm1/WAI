@@ -1,8 +1,11 @@
 <md-toolbar>
     <div layout="row">
         <div class="md-toolbar-tools" flex layout="row" layout-align="space-between center" style="padding: 0">
-            <a ng-href=" " layout="column" layout-align="center">
-                <h1 style="margin: 20px">{{title}}</h1>
+            <a ng-href="/" layout="column" layout-align="center">
+                <h1 style="margin: 20px">WheRE</h1>
+            </a>
+            <a ng-href="/editor/" layout="column">
+                <h1 style="margin: 20px">Editor</h1>
             </a>
             <md-button class="md-raised" ng-click="ctrl.signInClick()" style="margin: 14px">
                 {{ctrl.getCurrentUser() ? "Log out" : "Sign in"}}
