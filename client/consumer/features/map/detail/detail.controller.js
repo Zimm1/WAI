@@ -28,7 +28,7 @@
             $mdToast.show(
                 $mdToast.simple()
                     .textContent(message)
-                    .position('top center')
+                    .position('bottom center')
                     .hideDelay(3000)
             );
         };
@@ -114,8 +114,18 @@
 
         this.updateLanguageText = () => {
             this.speakCancel();
+
+            if(this.title === '' && this.imgLink === '../common/assets/jpg/image-not-available.jpg') {
+                return;
+            }
+
             let selectedLang = this.selectedLanguage[0];
-            let lang = selectedLang.lang;
+            let lang;
+            if(selectedLang){
+                lang =  selectedLang.lang;
+            } else {
+                lang = 'it';
+            }
 
             if(!lang || !this.poiObj.name || !this.poiObj.lang) {
                 showToast('Loading...');
@@ -258,12 +268,14 @@
                          } else {
                              link = "../common/assets/jpg/image-not-available.jpg";
                              height = 400;
+                             this.title = '';
+                             this.text = '';
                          }
 
                          updateImgAttr(link, height);
+                         this.updateLanguageText();
                      });
                  });
-                 this.updateLanguageText();
              }).catch((error) => {
                 console.error(error);
                 showToast('Too Many Requests')

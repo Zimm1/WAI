@@ -9,7 +9,10 @@
             <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}"/>
         </div>
         <h1>{{dtlCtrl.title}}</h1>
-        <div layout="column" layout-align="space-around start">
+        <div layout="row" layout-align="center center">
+            <md-button ng-click="dtlCtrl.playWhat()" class="md-accent" ng-disabled="dtlCtrl.clickedWhereIam">Where M I?</md-button>
+        </div>
+        <div layout="column" layout-align="center center">
             <div ng-if="dtlCtrl.videoID!=''">
                 <ng-youtube-embed
                         width="350px"
@@ -28,12 +31,8 @@
 
         <div layout="row" layout-align="space-between center">
             <md-button ng-click="dtlCtrl.playLess()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">Less</md-button>
-            <md-button ng-click="dtlCtrl.playWhat()" class="md-accent" ng-disabled="dtlCtrl.clickedWhereIam">Where M I?</md-button>
-            <md-button ng-click="dtlCtrl.playMore()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">More</md-button>
-        </div>
-
-        <div layout="row" layout-align="center center">
             <md-button ng-click="dtlCtrl.playHow()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">How</md-button>
+            <md-button ng-click="dtlCtrl.playMore()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">More</md-button>
         </div>
 
         <div layout="row" layout-align="space-between center">
@@ -45,28 +44,23 @@
                     button-label="name"
                     item-label="name"
                     selection-mode="single"
-                    tick-property="selected">
+                    tick-property="selected"
+                    helper-elements="">
             </isteven-multi-select>
             <md-button ng-click="dtlCtrl.stopRouting()">Stop Indications</md-button>
         </div>
+
         <div>
             <p ng-if="dtlCtrl.text !== null">{{dtlCtrl.text}}</p>
             <div ng-if="dtlCtrl.text === null" class="failure">
                 <p>Error...</p>
             </div>
-            <div layout="row" layout-align="center center" ng-if="dtlCtrl.text !=='' && dtlCtrl.text !== null ">
-                <md-button ng-click="dtlCtrl.textSpeak()" class="md-accent">
+
+            <div layout="row" layout-align="center center">
+                <md-button ng-click="dtlCtrl.textSpeak()" class="md-accent" ng-if="dtlCtrl.text !=='' && dtlCtrl.text !== null ">
                     Speak
                 </md-button>
-                <md-button ng-click="dtlCtrl.speakCancel()" class="md-accent">
-                    Stop
-                </md-button>
-            </div>
-        </div>
-
-        <div layout="row" class="filterItem">
-            <label for="language">Language: </label>
-            <isteven-multi-select
+                <isteven-multi-select
                     id="language"
                     input-model="dtlCtrl.languageClip"
                     output-model="dtlCtrl.selectedLanguage"
@@ -74,19 +68,26 @@
                     item-label="name"
                     selection-mode="single"
                     tick-property="selected"
-                    on-item-click="dtlCtrl.updateLanguageText()">
-            </isteven-multi-select>
+                    helper-elements=""
+                    on-item-click="dtlCtrl.updateLanguageText()"></isteven-multi-select>
+                <md-button ng-click="dtlCtrl.speakCancel()" class="md-accent" ng-if="dtlCtrl.text !=='' && dtlCtrl.text !== null ">
+                    Stop
+                </md-button>
+            </div>
         </div>
 
         <div layout="row" layout-align="space-between center">
             <md-button ng-click="dtlCtrl.previousPoi()" class="md-accent">
                 Previous POI
             </md-button>
-            <md-button ng-click="dtlCtrl.closeSidenav()" class="md-accent">
-                Close
-            </md-button>
             <md-button ng-click="dtlCtrl.nextPoi()" class="md-accent">
                 Next POI
+            </md-button>
+        </div>
+
+        <div layout="row" layout-align="center center">
+            <md-button ng-click="dtlCtrl.closeSidenav()" class="btn-primary">
+                Close
             </md-button>
         </div>
     </md-content>

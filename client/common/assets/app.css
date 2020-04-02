@@ -220,11 +220,16 @@ md-sidenav.md-closed.md-locked-open-add-active {
 /* multiselect*/
 /*.checkboxLayer {
   width: 225px;
-}
+}*/
 
 .multiSelect .checkboxLayer {
-  min-width: 225px !important;
-}*/
+  min-width: 100px !important;
+  max-width: 100px !important;
+}
+
+.multiSelect .checkBoxContainer {
+  padding: 0 !important;
+}
 
 #filterMenu .filterItem{
   margin: 15px 5px 15px 5px;
