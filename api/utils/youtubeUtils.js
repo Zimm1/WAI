@@ -2,8 +2,10 @@ const fs = require('fs');
 const {google} = require("googleapis");
 const ffmpeg = require('fluent-ffmpeg');
 const {logger} = require('../utils/logUtils');
+const path = require('path');
+const appRoot = require('app-root-path').path;
 const config = require('config');
-const RESOURCES_PATH = config.get("API.RESOURCES_PATH");
+const RESOURCES_PATH = path.resolve(appRoot, config.get("API.RESOURCES_PATH"));
 
 const YOUTUBE_VIDEO_URL = 'https://www.youtube.com/watch?v=';
 const BACKGROUND_IMG_FILE_NAME = 'bg.png';
@@ -38,15 +40,20 @@ function YoutubeUploader() {
         return desc;
     };
 
-    this._executeFfmpeg = args => {
-        let command = ffmpeg().output(' ');
+    this._executeFfmpeg = (args) => {
+        const command = ffmpeg().output(' ');
+
         command._outputs[0].isFile = false;
         command._outputs[0].target = "";
+
         command._global.get = () => {
-            if(typeof args === "string") {
-                return args.split(' ').filter(c => c !== "" && c !== "\\\n")
-            } else return args;
+            if (typeof args !== "string") {
+                return args;
+            }
+
+            return args.split(' ').filter(c => c !== "" && c !== "\\\n");
         };
+
         return command;
     };
 

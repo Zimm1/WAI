@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "scripts": {
     "start": "nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js",
-    "start:prod": "node index.js",
-    "generate_refresh_tokens": "node scripts/getRefreshTokens.js"
+    "start_prod": "node index.js",
+    "generate_refresh_tokens": "node scripts/generateRefreshTokens.js",
+    "deploy": "bash scripts/deploy_unibo.sh"
   },
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "body-parser": "1.19.0",
     "config": "3.1.0",
     "express": "4.17.1",
@@ -20,13 +22,13 @@
     "mongoose-auto-increment": "5.0.1",
     "morgan": "1.9.1",
     "multer": "^1.4.2",
-    "open": "^7.0.2",
     "passport": "0.4.0",
     "passport-local": "1.0.0",
     "strip-ansi": "5.2.0",
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "nodemon": "1.19.1"
+    "nodemon": "1.19.1",
+    "open": "^7.0.3"
   }
 }

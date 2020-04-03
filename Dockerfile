@@ -16,5 +16,4 @@ ADD . .
 
 # Exports
 EXPOSE 8000
-EXPOSE 443
 CMD [ "npm", "run", "start" ]

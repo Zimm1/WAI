@@ -5,11 +5,11 @@ const app = require('express')();
 
 const PORT = 5000;
 
-const YOUTUBE_CONFIG_PATH = '../config/youtube/';
+const YOUTUBE_CONFIG_PATH = './config/youtube/';
 const N_CREDENTIALS = require('config').get('YOUTUBE.N_CREDENTIALS');
 const CREDENTIALS = [];
 for (let i = 0; i < N_CREDENTIALS; ++i) {
-    CREDENTIALS.push(require(YOUTUBE_CONFIG_PATH + 'credentials/credentials-' + ("0" + i).slice(-2)));
+    CREDENTIALS.push(require('.' + YOUTUBE_CONFIG_PATH + 'credentials/credentials-' + ("0" + i).slice(-2)));
 }
 const REFRESH_TOKENS_PATH = YOUTUBE_CONFIG_PATH + 'refresh_tokens.json';
 

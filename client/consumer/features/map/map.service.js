@@ -162,13 +162,19 @@
             };
 
             this.getClips = async (olc) => {
-                clips.clear();
+                // TO REMOVE
+                PoiService.createListPoiFromClips(BOLOGNA_DUMP_CLIPS);
+                return BOLOGNA_DUMP_CLIPS;
+                //
 
+                clips.clear();
                 await getClipsFromOlcAndLevel(olc, 0);
 
                 console.log(`Number of clips found: ${clips.size}`);
 
                 PoiService.createListPoiFromClips([...clips.values()]);
+
+                return clips;
             };
 
             const getPoiInfo = function (placeIdOsm, placeTag, defaultName) {
@@ -221,7 +227,7 @@
                         }
                     });
                 });
-            }
+            };
 
             this.getPageImages = function (lang, pageTitle, imageSize) {
                 let encodedString = encodeURIComponent(pageTitle).replace(/%20/g, "+");
