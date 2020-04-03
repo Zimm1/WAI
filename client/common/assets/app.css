@@ -237,6 +237,10 @@ md-sidenav.md-closed.md-locked-open-add-active {
   align-items: center;
 }
 
+.spaceBottom {
+  margin-bottom: 65px;
+}
+
 
 .failure{
   background:#ff3939;

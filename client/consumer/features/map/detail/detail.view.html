@@ -4,12 +4,12 @@
             md-disable-backdrop=""
             md-whiteframe="dtlCtrl.whiteframe">
 
-    <md-content layout-margin="" layout-fill="">
+    <md-content layout-margin="" layout-fill="" ng-if="!dtlCtrl.stateLoading">
         <div layout="column" align-center="center center">
             <img src="{{dtlCtrl.imgLink}}" height="{{dtlCtrl.imgHeight}}"/>
         </div>
         <h1>{{dtlCtrl.title}}</h1>
-        <div layout="row" layout-align="center center">
+        <div layout="row" layout-align="center center" class="spaceBottom">
             <md-button ng-click="dtlCtrl.playWhat()" class="md-accent" ng-disabled="dtlCtrl.clickedWhereIam">Where M I?</md-button>
         </div>
         <div layout="column" layout-align="center center">
@@ -29,13 +29,13 @@
             </div>
         </div>
 
-        <div layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="space-between center" class="spaceBottom">
             <md-button ng-click="dtlCtrl.playLess()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">Less</md-button>
             <md-button ng-click="dtlCtrl.playHow()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">How</md-button>
             <md-button ng-click="dtlCtrl.playMore()" class="md-accent" ng-disabled="!dtlCtrl.clickedWhereIam">More</md-button>
         </div>
 
-        <div layout="row" layout-align="space-between center">
+        <div layout="row" layout-align="space-between center" class="spaceBottom">
             <md-button ng-click="dtlCtrl.startRouting()">Indications</md-button>
             <isteven-multi-select
                     layout-align="center"
@@ -50,7 +50,7 @@
             <md-button ng-click="dtlCtrl.stopRouting()">Stop Indications</md-button>
         </div>
 
-        <div>
+        <div class="spaceBottom" ng-if="dtlCtrl.imgLink !== '../common/assets/jpg/image-not-available.jpg'">
             <p ng-if="dtlCtrl.text !== null">{{dtlCtrl.text}}</p>
             <div ng-if="dtlCtrl.text === null" class="failure">
                 <p>Error...</p>
@@ -80,16 +80,17 @@
             <md-button ng-click="dtlCtrl.previousPoi()" class="md-accent">
                 Previous POI
             </md-button>
+            <md-button ng-click="dtlCtrl.closeSidenav()" class="btn-primary">
+                Close
+            </md-button>
             <md-button ng-click="dtlCtrl.nextPoi()" class="md-accent">
                 Next POI
             </md-button>
         </div>
-
-        <div layout="row" layout-align="center center">
-            <md-button ng-click="dtlCtrl.closeSidenav()" class="btn-primary">
-                Close
-            </md-button>
-        </div>
     </md-content>
+
+    <div layout="row" layout-sm="column" layout-align="center center" layout-fill="" ng-if="dtlCtrl.stateLoading">
+        <md-progress-circular md-mode="indeterminate" md-diameter="100"></md-progress-circular>
+    </div>
 
 </md-sidenav>

@@ -76,6 +76,23 @@
             }
         };
 
+        /*const isNear = (lat1, lon1, lat2, lon2) => {
+            let radlat1 = Math.PI * lat1/180;
+            let radlat2 = Math.PI * lat2/180;
+            let theta = lon1-lon2;
+            let radtheta = Math.PI * theta/180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            dist = (dist * 1.609344) / 1000;
+
+            return dist < 5;
+        }*/
+
         this.createListPoiFromClips = (clipList) => {
             for (let clip of clipList) {
                 if (clip.geoloc) {
@@ -100,6 +117,21 @@
                     this.listPoi.set(clip.geoloc, poi);
                 }
             }
+            /*if(this.listPoi.size > 1) {
+                for(let first of this.listPoi.keys()){
+                    for(let second of this.listPoi.keys()){
+                        let latLngFirst = OpenLocationCode.decode(first);
+                        let latLngSecond = OpenLocationCode.decode(second);
+                        if(first !== second && isNear(latLngFirst.lat, latLngFirst.lng, latLngSecond.lat, latLngSecond.lng)) {
+                            let obj = this.listPoi.get(second);
+                            let newObj = this.listPoi.get(first);
+                            newObj.clips.push(obj.clips);
+                            this.listPoi.set(first, newObj);
+                            this.listPoi.delete(second);
+                        }
+                    }
+                }
+            }*/
             $rootScope.$broadcast('wai.poiservice.showpoi');
         };
 

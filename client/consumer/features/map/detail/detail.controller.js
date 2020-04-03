@@ -3,6 +3,9 @@
         .controller('DetailController', DetailController);
 
     function DetailController($scope, $mdSidenav, $rootScope, $mdToast, MapService, ngYoutubeEmbedService, PoiService, PlayerService) {
+
+        const MAXWIDTH = 386;
+
         this.whiteframe = 4;
         this.numSentences = 5;
         this.poiObj = {};
@@ -14,7 +17,7 @@
         this.languageClip = [
             {name: "ita", lang: "it",selected: true}, {name: "eng", lang: 'en',selected: false}, {name: "fr", lang: 'fr',selected: false}
         ];
-        this.selectedLanguage = [];
+        this.selectedLanguage = [{lang: 'it'}];
 
         this.mode = [{name: "walking", value: 0, selected: true}, {name: "driving", value: 1, selected: false},
             {name: "cycling", value: 2, selected: false}];
@@ -24,21 +27,19 @@
         this.synth = null;
         this.clickedWhereIam = false;
 
+        this.stateLoading = false;
+
         const showToast = (message) => {
             $mdToast.show(
                 $mdToast.simple()
                     .textContent(message)
-                    .position('bottom center')
+                    .position('top center')
                     .hideDelay(3000)
             );
         };
         
-        this.toggleLeft = (item) => {
-            $mdSidenav('detailSidenav').toggle().then(function (data) {
-                if(item != null){
-                    showPoi(item);
-                }
-            });
+        this.toggleLeft = () => {
+            $mdSidenav('detailSidenav').toggle();
         };
 
         this.closeSidenav = () => {
@@ -58,7 +59,7 @@
         };
 
         const getSidenavWidth = () => {
-            return document.getElementById("sidenavDetail").clientWidth - 14;
+            return MAXWIDTH;
         };
 
         this.playWhat = () => {
@@ -116,21 +117,17 @@
             this.speakCancel();
 
             if(this.title === '' && this.imgLink === '../common/assets/jpg/image-not-available.jpg') {
+                if(!this.isOpenSidenav()){
+                    this.toggleLeft();
+                } else {
+                    this.stateLoading = false;
+                }
+                $scope.$apply();
                 return;
             }
 
             let selectedLang = this.selectedLanguage[0];
-            let lang;
-            if(selectedLang){
-                lang =  selectedLang.lang;
-            } else {
-                lang = 'it';
-            }
-
-            if(!lang || !this.poiObj.name || !this.poiObj.lang) {
-                showToast('Loading...');
-                return;
-            }
+            let lang =  selectedLang.lang;
 
             getLangLinks(this.poiObj.name, 1, lang, this.poiObj.lang).then((data) => {
                 let itr = data['data']['query']['pages'];
@@ -153,6 +150,12 @@
                             let extract = key.extract;
 
                             updateText(title, extract);
+                            if(!this.isOpenSidenav()){
+                                this.toggleLeft();
+                            } else {
+                                this.stateLoading = false;
+                            }
+                            $scope.$apply();
                         });
                     });
                 });
@@ -278,7 +281,7 @@
                  });
              }).catch((error) => {
                 console.error(error);
-                showToast('Too Many Requests')
+                showToast('Too Many Requests');
                 this.closeSidenav();
              });
          };
@@ -308,13 +311,18 @@
 
          $scope.$on('wai.poiservice.destinationreached', () => {
              if(!this.isOpenSidenav()){
-                 this.toggleLeft(null)
+                 this.toggleLeft();
              }
             this.playWhat();
          });
 
         $scope.$on('wai.poiservice.item', (event, item, directions) => {
             stopMedia();
+
+            if(this.isOpenSidenav()){
+                this.stateLoading = true;
+            }
+
             showPoi(item);
             if(directions){
                 this.startRouting();
@@ -325,11 +333,11 @@
             this.synth = window.speechSynthesis;
             stopMedia();
 
-            if(!this.isOpenSidenav()){
-                this.toggleLeft(item);
-            } else {
-                showPoi(item);
+            if(this.isOpenSidenav()){
+                this.stateLoading = true;
             }
+
+            showPoi(item)
         });
     }
 
