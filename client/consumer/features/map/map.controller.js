@@ -109,10 +109,10 @@
                 let redIcon = new L.Icon({
                     iconUrl: 'common/assets/png/marker-icon-red.png',
                     shadowUrl: 'common/assets/png/marker-shadow.png',
-                    iconSize: [25, 41],
+                    iconSize: [30, 45],
                     iconAnchor: [12, 41],
                     popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
+                    shadowSize: [45, 45]
                 });
 
 
@@ -130,9 +130,13 @@
                     if(destCoord){
                         let destinationOlc = OpenLocationCode.encode(destCoord.lat,destCoord.lng);
                         let userPositionOlc = OpenLocationCode.encode(markerLocation.lat.toFixed(6), markerLocation.lng.toFixed(6));
-                        if(destinationOlc === userPositionOlc){
-                            clearRoute();
-                            $rootScope.$broadcast('wai.poiservice.destinationreached');
+                        let nearOlc = MapService.getOlcsAround(userPositionOlc);
+                        for(const item of nearOlc) {
+                            if(destinationOlc === item){
+                                clearRoute();
+                                $rootScope.$broadcast('wai.poiservice.destinationreached');
+                                break;
+                            }
                         }
                     }
                 }

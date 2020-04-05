@@ -28,6 +28,7 @@
         this.clickedWhereIam = false;
 
         this.stateLoading = false;
+        this.stateDirection = false;
 
         const showToast = (message) => {
             $mdToast.show(
@@ -106,10 +107,12 @@
         this.startRouting = () => {
             let idDest = this.poiObj.geoloc;
             let mode =  this.selectedMode[0].value;
+            this.stateDirection = true;
             $rootScope.$broadcast('wai.map.direction', idDest, mode);
         };
 
         this.stopRouting = () => {
+            this.stateDirection = false;
             $rootScope.$broadcast('wai.map.stopdirection');
         };
 
@@ -117,11 +120,7 @@
             this.speakCancel();
 
             if(this.title === '' && this.imgLink === '../common/assets/jpg/image-not-available.jpg') {
-                if(!this.isOpenSidenav()){
-                    this.toggleLeft();
-                } else {
-                    this.stateLoading = false;
-                }
+                this.stateLoading = false;
                 $scope.$apply();
                 return;
             }
@@ -134,7 +133,9 @@
                 angular.forEach(itr, (key, value) => {
                     if((key.langlinks === null || key.langlinks === undefined) && (lang !== this.poiObj.lang || value === "-1")){
                         console.log("error!");
+                        this.stateLoading = false;
                         updateText(this.poiObj.name, null);
+                        $scope.$apply();
                         return;
                     }
                     let title;
@@ -150,11 +151,7 @@
                             let extract = key.extract;
 
                             updateText(title, extract);
-                            if(!this.isOpenSidenav()){
-                                this.toggleLeft();
-                            } else {
-                                this.stateLoading = false;
-                            }
+                            this.stateLoading = false;
                             $scope.$apply();
                         });
                     });
@@ -333,8 +330,10 @@
             this.synth = window.speechSynthesis;
             stopMedia();
 
-            if(this.isOpenSidenav()){
-                this.stateLoading = true;
+            this.stateLoading = true;
+
+            if(!this.isOpenSidenav()){
+                this.toggleLeft();
             }
 
             showPoi(item)

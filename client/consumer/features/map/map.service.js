@@ -51,7 +51,7 @@
                 return OLC_CHARS[(OLC_CHARS.indexOf(char) + increment + OLC_CHARS.length) % OLC_CHARS.length];
             };
 
-            const getOlcsAround = (olc) => {
+            this.getOlcsAround = (olc) => {
                 const olcs = [ olc ];
 
                 OLC_DIRECTIONS.forEach(([x, y]) => {
@@ -66,17 +66,17 @@
 
             const getNearOlcsFromLevel = (olc, level) => {
                 if (level === 0) {
-                    return getOlcsAround(olc);
+                    return this.getOlcsAround(olc);
                 }
 
                 olc = olc.substring(0, olc.length - 3);
                 if (level === 1) {
-                    return getOlcsAround(olc)
+                    return this.getOlcsAround(olc)
                         .map((o) => o + '+');
                 }
 
                 olc = olc.substring(0, olc.length - 2);
-                return getOlcsAround(olc)
+                return this.getOlcsAround(olc)
                     .map((o) => o + '00+');
             };
 

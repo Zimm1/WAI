@@ -47,13 +47,13 @@
                     tick-property="selected"
                     helper-elements="">
             </isteven-multi-select>
-            <md-button ng-click="dtlCtrl.stopRouting()">Stop Indications</md-button>
+            <md-button ng-click="dtlCtrl.stopRouting()" ng-disabled="!dtlCtrl.stateDirection">Stop Indications</md-button>
         </div>
 
         <div class="spaceBottom" ng-if="dtlCtrl.imgLink !== '../common/assets/jpg/image-not-available.jpg'">
             <p ng-if="dtlCtrl.text !== null">{{dtlCtrl.text}}</p>
-            <div ng-if="dtlCtrl.text === null" class="failure">
-                <p>Error...</p>
+            <div ng-if="dtlCtrl.text === null" class="failure spaceBottom">
+                <p>Couldn't find a page in this language</p>
             </div>
 
             <div layout="row" layout-align="center center">

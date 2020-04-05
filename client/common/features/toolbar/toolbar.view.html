@@ -4,12 +4,17 @@
             <a ng-href="/" layout="column" layout-align="center">
                 <h1 style="margin: 20px">WheRE</h1>
             </a>
-            <a ng-href="/editor/" layout="column">
-                <h1 style="margin: 20px">Editor</h1>
-            </a>
-            <md-button class="md-raised" ng-click="ctrl.signInClick()" style="margin: 14px">
-                {{ctrl.getCurrentUser() ? "Log out" : "Sign in"}}
-            </md-button>
+            <div layout="row" layout-align="space-between center">
+                <a layout="column" ng-click="ctrl.loadHome()">
+                    <md-button class="md-raised">Home</md-button>
+                </a>
+                <a layout="column" ng-click="ctrl.loadEditor()">
+                    <md-button class="md-raised">Editor</md-button>
+                </a>
+                <md-button class="md-raised" ng-click="ctrl.signInClick()" style="margin: 14px">
+                    {{ctrl.getCurrentUser() ? "Log out" : "Sign in"}}
+                </md-button>
+            </div>
         </div>
     </div>
 </md-toolbar>

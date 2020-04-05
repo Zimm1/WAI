@@ -88,9 +88,9 @@
             dist = Math.acos(dist);
             dist = dist * 180/Math.PI;
             dist = dist * 60 * 1.1515;
-            dist = (dist * 1.609344) / 1000;
+            dist = (dist * 1.609344) * 1000;
 
-            return dist < 7;
+            return dist < 40;
         }
 
         this.createListPoiFromClips = (clipList) => {
@@ -117,24 +117,21 @@
                     this.listPoi.set(clip.geoloc, poi);
                 }
             }
-
-            if (this.listPoi.size > 1) {
-                for (let first of this.listPoi.keys()) {
-                    for (let second of this.listPoi.keys()) {
+            if(this.listPoi.size > 1) {
+                for(let first of this.listPoi.keys()){
+                    for(let second of this.listPoi.keys()){
                         let latLngFirst = OpenLocationCode.decode(first);
                         let latLngSecond = OpenLocationCode.decode(second);
-                        
-                        if (first !== second && isNear(latLngFirst.lat, latLngFirst.lng, latLngSecond.lat, latLngSecond.lng)) {
+                        if(first !== second && isNear(latLngFirst.latitudeCenter, latLngFirst.longitudeCenter, latLngSecond.latitudeCenter, latLngSecond.longitudeCenter)) {
                             let obj = this.listPoi.get(second);
                             let newObj = this.listPoi.get(first);
-                            newObj.clips.push(obj.clips);
+                            newObj.clips = newObj.clips.concat(obj.clips);
                             this.listPoi.set(first, newObj);
                             this.listPoi.delete(second);
                         }
                     }
                 }
             }
-
             $rootScope.$broadcast('wai.poiservice.showpoi');
         };
 
