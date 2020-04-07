@@ -28,18 +28,18 @@
 
                             <div class="controls text-center" style="padding-top: 10px;"
                                  ng-hide="recorder.status.isDenied === true">
-                                <button ng-click="recorder.status.isRecording ? recorder.stopRecord() : recorder.startRecord()"
-                                        type="button" class="btn"
-                                        ng-class="{'btn-primary': !recorder.status.isRecording, 'btn-danger': recorder.status.isRecording}">
+                                <md-button ng-click="recorder.status.isRecording ? recorder.stopRecord() : recorder.startRecord()"
+                                           type="button" class="btn"
+                                           ng-class="{'btn-primary': !recorder.status.isRecording, 'btn-danger': recorder.status.isRecording}">
                                     <i class="glyphicon glyphicon-record"></i> {{recorder.status.isRecording ? 'Stop' :
                                     'Start'}} Recording
-                                </button>
+                                </md-button>
 
-                                <button class="btn"
-                                        ng-class="{'btn-primary': (recorder.status.isPaused || recorder.status.isStopped), 'btn-warning': recorder.status.isPlaying}"
-                                        ng-click="recorder.status.isPlaying ? recorder.playbackPause() : recorder.playbackResume()"
-                                        type="button"
-                                        ng-disabled="recorder.status.isRecording || !recorder.audioModel">
+                                <md-button aria-label="play" class="btn"
+                                           ng-class="{'btn-primary': (recorder.status.isPaused || recorder.status.isStopped), 'btn-warning': recorder.status.isPlaying}"
+                                           ng-click="recorder.status.isPlaying ? recorder.playbackPause() : recorder.playbackResume()"
+                                           type="button"
+                                           ng-disabled="recorder.status.isRecording || !recorder.audioModel">
                                     <span ng-if="recorder.status.isPaused || recorder.status.isStopped">
                                         <i class="glyphicon glyphicon-play"></i> Play
                                     </span>
@@ -47,7 +47,7 @@
                                     <span ng-if="recorder.status.isPlaying">
                                         <i class="glyphicon glyphicon-pause"></i> Pause
                                     </span>
-                                </button>
+                                </md-button>
 
                             </div>
                             <div class="clearfix"></div>
@@ -69,12 +69,11 @@
                         <div ng-show="!recorder.status.isRecording && recorder.audioModel">
                             <ng-audio-recorder-wave-view ></ng-audio-recorder-wave-view>
                         </div>
+
                     </div>
                 </div>
             </div>
-
         </div>
-
         <div ng-if="!recorder.isAvailable" class="alert alert-warning">
             Your browser does not support this feature natively, please use latest version of <a
                 href="https://www.google.com/chrome/browser" target="_blank">Google Chrome</a> or <a
@@ -82,84 +81,87 @@
             Safari or Internet Explorer, you can install <a href="https://get.adobe.com/flashplayer/">Adobe Flash</a> to
             use this feature.
         </div>
+
     </div>
+    <form style="margin-top: 10px;">
+        <div style="margin-left: 50px;" layout="row" layout-align="space-between center">
+            <md-label class="opt">Purpose:
+                <md-select aria-label="purp" class="opt" ng-model="purp" ng-change="updateDetailValue()">
+                    <md-option value="what">What</md-option>
+                    <md-option value="how">How</md-option>
+                    <md-option value="why">Why</md-option>
+                </md-select>
+            </md-label>
 
-    <form novalidate>
+            <br><br>
 
-        <label>Purpose:
-            <select ng-model="purp" ng-change="updateDetailValue()">
-                <option value="what">What</option>
-                <option value="how">How</option>
-                <option value="why">Why</option>
-            </select>
-        </label>
+            <md-label class="opt">Language:
+                <md-select aria-label="lan" ng-model="lan">
+                    <md-option value="eng">Eng</md-option>
+                    <md-option value="ita">Ita</md-option>
+                </md-select>
+            </md-label>
 
-        <br><br>
+            <br><br>
 
-        <label>Language:
-            <select ng-model="lan">
-                <option value="eng">Eng</option>
-                <option value="ita">Ita</option>
-            </select>
-        </label>
+            <md-label class="opt">Content:
+                <md-select aria-label="cont" ng-model="cont">
+                    <md-option value="none">None</md-option>
+                    <md-option value="nat">Nat</md-option>
+                    <md-option value="art">Art</md-option>
+                    <md-option value="his">His</md-option>
+                    <md-option value="flk">Flk</md-option>
+                    <md-option value="mod">Mod</md-option>
+                    <md-option value="rel">Rel</md-option>
+                    <md-option value="cul">Cul</md-option>
+                    <md-option value="spo">Spo</md-option>
+                    <md-option value="mus">Mus</md-option>
+                    <md-option value="mov">Mov</md-option>
+                    <md-option value="fas">Fas</md-option>
+                    <md-option value="shp">Shp</md-option>
+                    <md-option value="tec">Tec</md-option>
+                    <md-option value="pop">Pop</md-option>
+                    <md-option value="prs">Prs</md-option>
+                    <md-option value="oth">Oth</md-option>
+                </md-select>
+            </md-label>
 
-        <br><br>
+            <br><br>
 
-        <label>Content:
-            <select ng-model="cont">
-                <option value="none">None</option>
-                <option value="nat">Nat</option>
-                <option value="art">Art</option>
-                <option value="his">His</option>
-                <option value="flk">Flk</option>
-                <option value="mod">Mod</option>
-                <option value="rel">Rel</option>
-                <option value="cul">Cul</option>
-                <option value="spo">Spo</option>
-                <option value="mus">Mus</option>
-                <option value="mov">Mov</option>
-                <option value="fas">Fas</option>
-                <option value="shp">Shp</option>
-                <option value="tec">Tec</option>
-                <option value="pop">Pop</option>
-                <option value="prs">Prs</option>
-                <option value="oth">Oth</option>
-            </select>
-        </label>
+            <md-label class="opt"> Audience:
+                <md-select aria-label="aud" ng-model="adnc">
+                    <md-option value="gen">Gen</md-option>
+                    <md-option value="pre">Pre</md-option>
+                    <md-option value="elm">Elm</md-option>
+                    <md-option value="mid">Mid</md-option>
+                    <md-option value="scl">Scl</md-option>
+                    <md-option value="*">All</md-option>
+                </md-select>
+            </md-label>
 
-        <br><br>
+            <br><br>
 
-        <label> Audience:
-            <select ng-model="adnc">
-                <option value="gen">Gen</option>
-                <option value="pre">Pre</option>
-                <option value="elm">Elm</option>
-                <option value="mid">Mid</option>
-                <option value="scl">Scl</option>
-                <option value="*">All</option>
-            </select>
-        </label>
-
-        <br><br>
-
-        <label>Detail:
-            <select ng-model="det" ng-disabled="purp !== 'why'">
-                <option value="1">Low detail </option>
-                <option value="2">Medium detail </option>
-                <option value="3">High detail </option>
-            </select>
-        </label>
-
-        <br><br>
-
-        <div ng-if="olc">
-            Location: {{olc}}
+            <md-label class="opt">Detail:
+                <md-select aria-label="det" ng-model="det" ng-disabled="purp !== 'why'">
+                    <md-option value="1">Low detail </md-option>
+                    <md-option value="2">Medium detail </md-option>
+                    <md-option value="3">High detail </md-option>
+                </md-select>
+            </md-label>
+            <br><br>
+            <div ng-if="olc">
+                <md-label> Location: {{olc}}</md-label>
+            </div>
+            <br><br>
         </div>
-
-        <br><br>
-
-        <button  ng-disabled="olc === null || (det === null && purp === 'why') || adnc === null || cont === null || lan === null || purp === null" ng-click="submit()" class = "btn btn-primary">Upload File</button>
-
     </form>
-</div>
+    <div style="margin-bottom: 15px;" layout="row" layout-align="center center">
+        <md-button ng-disabled="olc === null ||
+                               (det === null && purp === 'why') ||
+                                adnc === null ||
+                                cont === null ||
+                                lan === null ||
+                                purp === null" ng-click="submit()" class = "btn btn-primary">Upload clip
+        </md-button>
+    </div>
 </div>

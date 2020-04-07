@@ -115,7 +115,7 @@
                 formData.append("language", $scope.lan);
                 formData.append("content", $scope.cont);
                 formData.append("audience", $scope.adnc);
-                formData.append("detail", $scope.det);
+                formData.append("detail", $scope.det ? $scope.det : 0);
                 formData.append("geoloc", $scope.olc);
 
                 request.open("POST", "/api/clip", true);
