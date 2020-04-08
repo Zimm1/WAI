@@ -88,9 +88,9 @@
             <div style="margin-left: 50px;" layout="row" layout-align="space-between center">
                 <md-label class="opt">Purpose:
                     <md-select aria-label="purp" class="opt" ng-model="purp" ng-change="updateDetailValue()">
-                        <md-option value="what">What</md-option>
-                        <md-option value="how">How</md-option>
-                        <md-option value="why">Why</md-option>
+                        <md-option ng-value="'what'">What</md-option>
+                        <md-option ng-value="'how'">How</md-option>
+                        <md-option ng-value="'why'">Why</md-option>
                     </md-select>
                 </md-label>
 
@@ -98,8 +98,8 @@
 
                 <md-label class="opt">Language:
                     <md-select aria-label="lan" ng-model="lan">
-                        <md-option value="eng">Eng</md-option>
-                        <md-option value="ita">Ita</md-option>
+                        <md-option ng-value="'eng'">Eng</md-option>
+                        <md-option ng-value="'ita'">Ita</md-option>
                     </md-select>
                 </md-label>
 
@@ -107,23 +107,23 @@
 
                 <md-label class="opt">Content:
                     <md-select aria-label="cont" ng-model="cont">
-                        <md-option value="none">None</md-option>
-                        <md-option value="nat">Nat</md-option>
-                        <md-option value="art">Art</md-option>
-                        <md-option value="his">His</md-option>
-                        <md-option value="flk">Flk</md-option>
-                        <md-option value="mod">Mod</md-option>
-                        <md-option value="rel">Rel</md-option>
-                        <md-option value="cul">Cul</md-option>
-                        <md-option value="spo">Spo</md-option>
-                        <md-option value="mus">Mus</md-option>
-                        <md-option value="mov">Mov</md-option>
-                        <md-option value="fas">Fas</md-option>
-                        <md-option value="shp">Shp</md-option>
-                        <md-option value="tec">Tec</md-option>
-                        <md-option value="pop">Pop</md-option>
-                        <md-option value="prs">Prs</md-option>
-                        <md-option value="oth">Oth</md-option>
+                        <md-option ng-value="'none'">None</md-option>
+                        <md-option ng-value="'nat'">Nat</md-option>
+                        <md-option ng-value="'art'">Art</md-option>
+                        <md-option ng-value="'his'">His</md-option>
+                        <md-option ng-value="'flk'">Flk</md-option>
+                        <md-option ng-value="'mod'">Mod</md-option>
+                        <md-option ng-value="'rel'">Rel</md-option>
+                        <md-option ng-value="'cul'">Cul</md-option>
+                        <md-option ng-value="'spo'">Spo</md-option>
+                        <md-option ng-value="'mus'">Mus</md-option>
+                        <md-option ng-value="'mov'">Mov</md-option>
+                        <md-option ng-value="'fas'">Fas</md-option>
+                        <md-option ng-value="'shp'">Shp</md-option>
+                        <md-option ng-value="'tec'">Tec</md-option>
+                        <md-option ng-value="'pop'">Pop</md-option>
+                        <md-option ng-value="'prs'">Prs</md-option>
+                        <md-option ng-value="'oth'">Oth</md-option>
                     </md-select>
                 </md-label>
 
@@ -131,12 +131,12 @@
 
                 <md-label class="opt"> Audience:
                     <md-select aria-label="aud" ng-model="adnc">
-                        <md-option value="gen">Gen</md-option>
-                        <md-option value="pre">Pre</md-option>
-                        <md-option value="elm">Elm</md-option>
-                        <md-option value="mid">Mid</md-option>
-                        <md-option value="scl">Scl</md-option>
-                        <md-option value="*">All</md-option>
+                        <md-option ng-value="'gen'">Gen</md-option>
+                        <md-option ng-value="'pre'">Pre</md-option>
+                        <md-option ng-value="'elm'">Elm</md-option>
+                        <md-option ng-value="'mid'">Mid</md-option>
+                        <md-option ng-value="'scl'">Scl</md-option>
+                        <md-option ng-value="'*'">All</md-option>
                     </md-select>
                 </md-label>
 
@@ -144,9 +144,9 @@
 
                 <md-label class="opt">Detail:
                     <md-select aria-label="det" ng-model="det" ng-disabled="purp !== 'why'">
-                        <md-option value="1">Low detail </md-option>
-                        <md-option value="2">Medium detail </md-option>
-                        <md-option value="3">High detail </md-option>
+                        <md-option ng-value="'1'">Low detail </md-option>
+                        <md-option ng-value="'2'">Medium detail </md-option>
+                        <md-option ng-value="'3'">High detail </md-option>
                     </md-select>
                 </md-label>
                 <br><br>
