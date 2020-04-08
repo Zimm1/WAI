@@ -1,5 +1,4 @@
-<div class="editorNotMap" ng-controller="DemoController as demoCntrl">
-    <div class="editor" ng-if="demoCntrl.getCurrentUser()">
+<div class="editor" ng-controller="DemoController as demoCntrl">
         <leaflet id="editor" center="demoCntrl.center" maxbounds="demoCntrl.mybounds" defaults="demoCntrl.defaults"></leaflet>
         <div ng-audio-recorder id="mainAudio" audio-model="recorded" class="container">
             <div ng-if="recorder.isAvailable">
@@ -161,8 +160,4 @@
                                 purp === null" ng-click="submit()" class = "btn btn-primary">Upload clip
             </md-button>
         </div>
-    </div>
-    <div layout="row" layout-align="center center" style="height: 100%" ng-if="!demoCntrl.getCurrentUser()">
-        <md-label >Please login or register</md-label>
-    </div>
 </div>
