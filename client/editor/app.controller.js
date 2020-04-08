@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     angular.module('app')
-        .controller('DemoController', function ($scope, $timeout, $http, $localStorage, $mdToast, $rootScope, leafletData) {
+        .controller('DemoController', function ($scope, $timeout, $http, $localStorage, $mdToast, $rootScope, leafletData, AuthService) {
             const map = leafletData.getMap('editor');
 
             let selectedPlaceMarker;
@@ -21,10 +21,13 @@
                 }
             };
 
+            this.getCurrentUser = () => {
+                return AuthService.getCurrentUser();
+            }
+
             const centerView = (latLng) => {
                 this.center.lat = latLng.lat;
                 this.center.lng = latLng.lng;
-                this.center.zoom = 10;
             }
 
             this.updateMarker = (latLng) =>  {

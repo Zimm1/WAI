@@ -1,167 +1,168 @@
-<div class="editor" ng-controller="DemoController as demoCntrl">
-    <leaflet id="editor" center="demoCntrl.center" maxbounds="demoCntrl.mybounds" defaults="demoCntrl.defaults"></leaflet>
-    <div ng-audio-recorder id="mainAudio" audio-model="recorded" class="container">
-        <div ng-if="recorder.isAvailable">
+<div class="editorNotMap" ng-controller="DemoController as demoCntrl">
+    <div class="editor" ng-if="demoCntrl.getCurrentUser()">
+        <leaflet id="editor" center="demoCntrl.center" maxbounds="demoCntrl.mybounds" defaults="demoCntrl.defaults"></leaflet>
+        <div ng-audio-recorder id="mainAudio" audio-model="recorded" class="container">
+            <div ng-if="recorder.isAvailable">
 
-            <div class="panel panel-primary" style="margin-top: 15px;">
+                <div class="panel panel-primary" style="margin-top: 15px;">
 
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Nuova clip
-                    </h3>
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Nuova clip
+                        </h3>
 
-                    <div class="clearfix"></div>
-                </div>
+                        <div class="clearfix"></div>
+                    </div>
 
-                <div class="panel-body">
-                    <div>
+                    <div class="panel-body">
                         <div>
-                            <h3 style="float: right; font-family: sans-serif; text-align: center; width: 50px; border-radius: 30px; border: solid 2px #333; padding: 10px; margin: 0; background: #337ab7; color: #fff;"
-                                ng-if="recorder.status.isRecording">
-                                {{recorder.elapsedTime >= 10 ? recorder.elapsedTime : ('0'+recorder.elapsedTime)}}
-                            </h3>
+                            <div>
+                                <h3 style="float: right; font-family: sans-serif; text-align: center; width: 50px; border-radius: 30px; border: solid 2px #333; padding: 10px; margin: 0; background: #337ab7; color: #fff;"
+                                    ng-if="recorder.status.isRecording">
+                                    {{recorder.elapsedTime >= 10 ? recorder.elapsedTime : ('0'+recorder.elapsedTime)}}
+                                </h3>
 
-                            <div class="alert alert-danger" ng-if="recorder.status.isDenied === true">
-                                Permission to use your microphone was declined, please refresh this page to grant
-                                permission.
-                            </div>
+                                <div class="alert alert-danger" ng-if="recorder.status.isDenied === true">
+                                    Permission to use your microphone was declined, please refresh this page to grant
+                                    permission.
+                                </div>
 
-                            <div class="controls text-center" style="padding-top: 10px;"
-                                 ng-hide="recorder.status.isDenied === true">
-                                <md-button ng-click="recorder.status.isRecording ? recorder.stopRecord() : recorder.startRecord()"
-                                           type="button" class="btn"
-                                           ng-class="{'btn-primary': !recorder.status.isRecording, 'btn-danger': recorder.status.isRecording}">
-                                    <i class="glyphicon glyphicon-record"></i> {{recorder.status.isRecording ? 'Stop' :
-                                    'Start'}} Recording
-                                </md-button>
+                                <div class="controls text-center" style="padding-top: 10px;"
+                                     ng-hide="recorder.status.isDenied === true">
+                                    <md-button ng-click="recorder.status.isRecording ? recorder.stopRecord() : recorder.startRecord()"
+                                               type="button" class="btn"
+                                               ng-class="{'btn-primary': !recorder.status.isRecording, 'btn-danger': recorder.status.isRecording}">
+                                        <i class="glyphicon glyphicon-record"></i> {{recorder.status.isRecording ? 'Stop' :
+                                        'Start'}} Recording
+                                    </md-button>
 
-                                <md-button aria-label="play" class="btn"
-                                           ng-class="{'btn-primary': (recorder.status.isPaused || recorder.status.isStopped), 'btn-warning': recorder.status.isPlaying}"
-                                           ng-click="recorder.status.isPlaying ? recorder.playbackPause() : recorder.playbackResume()"
-                                           type="button"
-                                           ng-disabled="recorder.status.isRecording || !recorder.audioModel">
+                                    <md-button aria-label="play" class="btn"
+                                               ng-class="{'btn-primary': (recorder.status.isPaused || recorder.status.isStopped), 'btn-warning': recorder.status.isPlaying}"
+                                               ng-click="recorder.status.isPlaying ? recorder.playbackPause() : recorder.playbackResume()"
+                                               type="button"
+                                               ng-disabled="recorder.status.isRecording || !recorder.audioModel">
                                     <span ng-if="recorder.status.isPaused || recorder.status.isStopped">
                                         <i class="glyphicon glyphicon-play"></i> Play
                                     </span>
 
-                                    <span ng-if="recorder.status.isPlaying">
+                                        <span ng-if="recorder.status.isPlaying">
                                         <i class="glyphicon glyphicon-pause"></i> Pause
                                     </span>
-                                </md-button>
+                                    </md-button>
 
+                                </div>
+                                <div class="clearfix"></div>
                             </div>
-                            <div class="clearfix"></div>
+
                         </div>
+                        <br/>
 
-                    </div>
-                    <br/>
-
-                    <div ng-if="recorder.status.isConverting">
-                        <p class="text-center">
-                            Please wait while we process your recording
-                        </p>
-                    </div>
-                    <div class="panels" canvas-sizer>
-                        <div ng-show="recorder.status.isRecording">
-                            <ng-audio-recorder-analyzer></ng-audio-recorder-analyzer>
+                        <div ng-if="recorder.status.isConverting">
+                            <p class="text-center">
+                                Please wait while we process your recording
+                            </p>
                         </div>
+                        <div class="panels" canvas-sizer>
+                            <div ng-show="recorder.status.isRecording">
+                                <ng-audio-recorder-analyzer></ng-audio-recorder-analyzer>
+                            </div>
 
-                        <div ng-show="!recorder.status.isRecording && recorder.audioModel">
-                            <ng-audio-recorder-wave-view ></ng-audio-recorder-wave-view>
+                            <div ng-show="!recorder.status.isRecording && recorder.audioModel">
+                                <ng-audio-recorder-wave-view ></ng-audio-recorder-wave-view>
+                            </div>
+
                         </div>
-
                     </div>
                 </div>
             </div>
-        </div>
-        <div ng-if="!recorder.isAvailable" class="alert alert-warning">
-            Your browser does not support this feature natively, please use latest version of <a
-                href="https://www.google.com/chrome/browser" target="_blank">Google Chrome</a> or <a
-                href="https://www.mozilla.org/en-US/firefox/new/" target="_blank">Mozilla Firefox</a>. If you're on
-            Safari or Internet Explorer, you can install <a href="https://get.adobe.com/flashplayer/">Adobe Flash</a> to
-            use this feature.
-        </div>
-
-    </div>
-    <form style="margin-top: 10px;">
-        <div style="margin-left: 50px;" layout="row" layout-align="space-between center">
-            <md-label class="opt">Purpose:
-                <md-select aria-label="purp" class="opt" ng-model="purp" ng-change="updateDetailValue()">
-                    <md-option value="what">What</md-option>
-                    <md-option value="how">How</md-option>
-                    <md-option value="why">Why</md-option>
-                </md-select>
-            </md-label>
-
-            <br><br>
-
-            <md-label class="opt">Language:
-                <md-select aria-label="lan" ng-model="lan">
-                    <md-option value="eng">Eng</md-option>
-                    <md-option value="ita">Ita</md-option>
-                </md-select>
-            </md-label>
-
-            <br><br>
-
-            <md-label class="opt">Content:
-                <md-select aria-label="cont" ng-model="cont">
-                    <md-option value="none">None</md-option>
-                    <md-option value="nat">Nat</md-option>
-                    <md-option value="art">Art</md-option>
-                    <md-option value="his">His</md-option>
-                    <md-option value="flk">Flk</md-option>
-                    <md-option value="mod">Mod</md-option>
-                    <md-option value="rel">Rel</md-option>
-                    <md-option value="cul">Cul</md-option>
-                    <md-option value="spo">Spo</md-option>
-                    <md-option value="mus">Mus</md-option>
-                    <md-option value="mov">Mov</md-option>
-                    <md-option value="fas">Fas</md-option>
-                    <md-option value="shp">Shp</md-option>
-                    <md-option value="tec">Tec</md-option>
-                    <md-option value="pop">Pop</md-option>
-                    <md-option value="prs">Prs</md-option>
-                    <md-option value="oth">Oth</md-option>
-                </md-select>
-            </md-label>
-
-            <br><br>
-
-            <md-label class="opt"> Audience:
-                <md-select aria-label="aud" ng-model="adnc">
-                    <md-option value="gen">Gen</md-option>
-                    <md-option value="pre">Pre</md-option>
-                    <md-option value="elm">Elm</md-option>
-                    <md-option value="mid">Mid</md-option>
-                    <md-option value="scl">Scl</md-option>
-                    <md-option value="*">All</md-option>
-                </md-select>
-            </md-label>
-
-            <br><br>
-
-            <md-label class="opt">Detail:
-                <md-select aria-label="det" ng-model="det" ng-disabled="purp !== 'why'">
-                    <md-option value="1">Low detail </md-option>
-                    <md-option value="2">Medium detail </md-option>
-                    <md-option value="3">High detail </md-option>
-                </md-select>
-            </md-label>
-            <br><br>
-            <div ng-if="olc">
-                <md-label> Location: {{olc}}</md-label>
+            <div ng-if="!recorder.isAvailable" class="alert alert-warning">
+                Your browser does not support this feature natively, please use latest version of <a
+                    href="https://www.google.com/chrome/browser" target="_blank">Google Chrome</a> or <a
+                    href="https://www.mozilla.org/en-US/firefox/new/" target="_blank">Mozilla Firefox</a>. If you're on
+                Safari or Internet Explorer, you can install <a href="https://get.adobe.com/flashplayer/">Adobe Flash</a> to
+                use this feature.
             </div>
-            <br><br>
+
         </div>
-    </form>
-    <div style="margin-bottom: 15px;" layout="row" layout-align="center center">
-        <md-button ng-disabled="olc === null ||
+        <form style="margin-top: 10px;">
+            <div style="margin-left: 50px;" layout="row" layout-align="space-between center">
+                <md-label class="opt">Purpose:
+                    <md-select aria-label="purp" class="opt" ng-model="purp" ng-change="updateDetailValue()">
+                        <md-option value="what">What</md-option>
+                        <md-option value="how">How</md-option>
+                        <md-option value="why">Why</md-option>
+                    </md-select>
+                </md-label>
+
+                <br><br>
+
+                <md-label class="opt">Language:
+                    <md-select aria-label="lan" ng-model="lan">
+                        <md-option value="eng">Eng</md-option>
+                        <md-option value="ita">Ita</md-option>
+                    </md-select>
+                </md-label>
+
+                <br><br>
+
+                <md-label class="opt">Content:
+                    <md-select aria-label="cont" ng-model="cont">
+                        <md-option value="none">None</md-option>
+                        <md-option value="nat">Nat</md-option>
+                        <md-option value="art">Art</md-option>
+                        <md-option value="his">His</md-option>
+                        <md-option value="flk">Flk</md-option>
+                        <md-option value="mod">Mod</md-option>
+                        <md-option value="rel">Rel</md-option>
+                        <md-option value="cul">Cul</md-option>
+                        <md-option value="spo">Spo</md-option>
+                        <md-option value="mus">Mus</md-option>
+                        <md-option value="mov">Mov</md-option>
+                        <md-option value="fas">Fas</md-option>
+                        <md-option value="shp">Shp</md-option>
+                        <md-option value="tec">Tec</md-option>
+                        <md-option value="pop">Pop</md-option>
+                        <md-option value="prs">Prs</md-option>
+                        <md-option value="oth">Oth</md-option>
+                    </md-select>
+                </md-label>
+
+                <br><br>
+
+                <md-label class="opt"> Audience:
+                    <md-select aria-label="aud" ng-model="adnc">
+                        <md-option value="gen">Gen</md-option>
+                        <md-option value="pre">Pre</md-option>
+                        <md-option value="elm">Elm</md-option>
+                        <md-option value="mid">Mid</md-option>
+                        <md-option value="scl">Scl</md-option>
+                        <md-option value="*">All</md-option>
+                    </md-select>
+                </md-label>
+
+                <br><br>
+
+                <md-label class="opt">Detail:
+                    <md-select aria-label="det" ng-model="det" ng-disabled="purp !== 'why'">
+                        <md-option value="1">Low detail </md-option>
+                        <md-option value="2">Medium detail </md-option>
+                        <md-option value="3">High detail </md-option>
+                    </md-select>
+                </md-label>
+                <br><br>
+            </div>
+        </form>
+        <div style="margin-bottom: 15px;" layout="row" layout-align="center center">
+            <md-button ng-disabled="olc === null ||
                                (det === null && purp === 'why') ||
                                 adnc === null ||
                                 cont === null ||
                                 lan === null ||
                                 purp === null" ng-click="submit()" class = "btn btn-primary">Upload clip
-        </md-button>
+            </md-button>
+        </div>
+    </div>
+    <div layout="row" layout-align="center center" style="height: 100%" ng-if="!demoCntrl.getCurrentUser()">
+        <md-label >Please login or register</md-label>
     </div>
 </div>
