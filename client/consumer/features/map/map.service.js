@@ -162,11 +162,6 @@
             };
 
             this.getClips = async (olc) => {
-                // TO REMOVE
-                PoiService.createListPoiFromClips(BOLOGNA_DUMP_CLIPS);
-                return BOLOGNA_DUMP_CLIPS;
-                //
-
                 clips.clear();
                 await getClipsFromOlcAndLevel(olc, 0);
 

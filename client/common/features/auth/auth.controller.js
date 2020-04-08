@@ -3,7 +3,7 @@
     angular.module('auth')
         .controller('AuthController', AuthController);
 
-    function AuthController($scope, $location, AuthService) {
+    function AuthController($scope, $location, $window, AuthService) {
         this.login = true;
         this.loading = false;
         this.error = null;
@@ -32,7 +32,7 @@
 
         const logIn = (user) => {
             AuthService.logIn(user.username, user.password).then((user) => {
-                $location.path('/');
+                redirectHome();
             }).catch((message) => {
                 setError(message);
             }).then(() => {
@@ -42,13 +42,19 @@
 
         const signUp = (user) => {
             AuthService.signUp(user.username, user.email, user.password).then((user) => {
-                $location.path('/');
+                redirectHome();
             }).catch((message) => {
                 setError(message);
             }).then(() => {
                 stopLoading();
             });
         };
+
+        const redirectHome = () => {
+            let oldHref = $window.location.href;
+            let newHref = oldHref.substring(0,oldHref.lastIndexOf("/"));
+            $window.location.assign(newHref);
+        }
 
         const setError = (message) => {
             this.error = message;

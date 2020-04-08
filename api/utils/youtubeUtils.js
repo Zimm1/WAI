@@ -64,11 +64,11 @@ function YoutubeUploader() {
 
             this._executeFfmpeg(
                 `-loop 1 -framerate 2 -y ` +
-                `-i ${RESOURCES_PATH + BACKGROUND_IMG_FILE_NAME} ` +
-                `-i ${RESOURCES_PATH + audioFileName} ` +
+                `-i ${path.resolve(RESOURCES_PATH, BACKGROUND_IMG_FILE_NAME)} ` +
+                `-i ${path.resolve(RESOURCES_PATH, audioFileName)} ` +
                 `-c:v libx264 -tune stillimage -crf 18 ` +
                 `-c:a copy -shortest -pix_fmt yuv420p ` +
-                `${RESOURCES_PATH + videoFileName}`
+                `${path.resolve(RESOURCES_PATH, videoFileName)}`
             )
                 .on('start', () => {
                     logger.info('Conversion started');
@@ -103,7 +103,7 @@ function YoutubeUploader() {
             google.youtube({ version: 'v3', auth: this.auth }).videos.insert({
                 resource: {
                     snippet: {
-                        title: new Date().getTime(),
+                        title: `${videoData.description.split(':')[0]}:${new Date().getTime()}`,
                         description: videoData.description
                     },
                     status: {
@@ -112,7 +112,7 @@ function YoutubeUploader() {
                 },
                 part: "snippet,status",
                 media: {
-                    body: fs.createReadStream(RESOURCES_PATH + videoData.fileName)
+                    body: fs.createReadStream(path.resolve(RESOURCES_PATH, videoData.fileName))
                 }
             }, (err, data) => {
                 if (err) {
@@ -157,8 +157,8 @@ function YoutubeUploader() {
         return this.upload(videoData)
             .then(uploadResult => YOUTUBE_VIDEO_URL + uploadResult.data.id)
             .finally(() => {
-                fs.unlink(RESOURCES_PATH + clip.audio, () => {});
-                fs.unlink(RESOURCES_PATH + videoData.fileName, () => {});
+                fs.unlink(path.resolve(RESOURCES_PATH, clip.audio), () => {});
+                fs.unlink(path.resolve(RESOURCES_PATH, videoData.fileName), () => {});
             });
     };
 }
