@@ -8,7 +8,10 @@ const mongoUtils = require("../utils/mongoUtils");
 const YoutubeUploader = require("../utils/youtubeUtils").getInstance();
 const PAGINATION_LIMIT = require('config').get("API.PAGINATION.LIMIT");
 const CLIP_CONFIG = require('config').get("API.CLIP");
-const RESOURCES_PATH = require('config').get("API.RESOURCES_PATH");
+const path = require('path');
+const appRoot = require('app-root-path').path;
+const config = require('config');
+const RESOURCES_PATH = path.resolve(appRoot, config.get("API.RESOURCES_PATH"));
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
