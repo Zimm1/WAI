@@ -1,6 +1,7 @@
 const fs = require('fs');
 const {google} = require("googleapis");
 const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(require('@ffmpeg-installer/ffmpeg').path);
 const {logger} = require('../utils/logUtils');
 const path = require('path');
 const appRoot = require('app-root-path').path;
@@ -154,12 +155,15 @@ function YoutubeUploader() {
             description: generateDescription(clip)
         };
 
-        return this.upload(videoData)
-            .then(uploadResult => YOUTUBE_VIDEO_URL + uploadResult.data.id)
-            .finally(() => {
-                fs.unlink(path.resolve(RESOURCES_PATH, clip.audio), () => {});
-                fs.unlink(path.resolve(RESOURCES_PATH, videoData.fileName), () => {});
-            });
+        try {
+            const uploadResult = await this.upload(videoData);
+            return YOUTUBE_VIDEO_URL + uploadResult.data.id;
+        } catch (err) {
+            throw err;
+        } finally {
+            fs.unlink(path.resolve(RESOURCES_PATH, clip.audio), () => {});
+            fs.unlink(path.resolve(RESOURCES_PATH, videoData.fileName), () => {});
+        }
     };
 }
 

@@ -2,3 +2,5 @@ node_modules
 logs
 config.json
 .idea
+.code
+ffmpeg

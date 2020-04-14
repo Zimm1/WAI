@@ -17,13 +17,7 @@ const clientRouter = require('./client/client.router');
 const PORT = config.get('EXPRESS.PORT');
 
 
-mongooseInit().then(() => {
-    expressInit();
-}).catch((e) => {
-    logger.error(e.message, {label: 'START'});
-});
-
-function expressInit() {
+async function expressInit() {
     const app = express();
 
     app.use('/api', apiRouter);
@@ -49,3 +43,12 @@ async function mongooseInit() {
         logger.error(err, { label: 'MONGO' });
     });
 }
+
+(async () => {
+    try {
+        await mongooseInit();
+        await expressInit();
+    } catch (e) {
+        logger.error(e.message, {label: 'START'});
+    }
+})();
