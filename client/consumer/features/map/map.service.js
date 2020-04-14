@@ -71,13 +71,12 @@
 
                 olc = olc.substring(0, olc.length - 3);
                 if (level === 1) {
-                    return this.getOlcsAround(olc)
-                        .map((o) => o + '+');
+                    return this.getOlcsAround(olc);
                 }
 
                 olc = olc.substring(0, olc.length - 2);
                 return this.getOlcsAround(olc)
-                    .map((o) => o + '00+');
+                    .map((o) => o + '00');
             };
 
             const insertResponseClipItems = (items) => {

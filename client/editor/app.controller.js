@@ -86,6 +86,14 @@
             * */
             this.mybounds = {'northEast': {'lat': 90, 'lng': 180},'southWest': {'lat': -90, 'lng': -180}};
 
+            const removeMarker = () => {
+                map.then( map => {
+                    if(selectedPlaceMarker) {
+                        map.removeLayer(selectedPlaceMarker);
+                    }
+                });
+            }
+
             $scope.myFile = null;
             $scope.purp = null;
             $scope.lan = null;
@@ -94,6 +102,12 @@
             $scope.det = null;
             $scope.selectedId = null;
             $scope.olc = null;
+
+            $scope.uploadState = false;
+
+            $scope.updateUploadState = () => {
+                $scope.uploadState = !$scope.uploadState;
+            }
 
             const showToast = (message) => {
                 $mdToast.show(
@@ -104,7 +118,8 @@
                 );
             };
 
-            $scope.submit=function() {
+            $scope.submit= () => {
+                $scope.updateUploadState();
                 let d = new Date();
                 let fileName;
                 fileName = 'audio_recording_' + d.getTime().toString() + ".mp3";
@@ -124,7 +139,8 @@
                 request.open("POST", "/api/clip", true);
                 request.setRequestHeader("Authorization", ($localStorage.currentUser ? ("Bearer " + $localStorage.currentUser.token) : ''));
 
-                request.onreadystatechange = function() {
+                request.onreadystatechange = () => {
+                    $scope.uploadState = true;
                     if (request.readyState === 4) {
                         let { response } = request;
                         response = JSON.parse(response);
@@ -135,6 +151,7 @@
                         } else {
                             showToast("Clip uploaded successfully");
                             $scope.myFile = null;
+                            $scope.recorded = null;
                             $scope.purp = null;
                             $scope.lan = null;
                             $scope.cont = null;
@@ -142,6 +159,8 @@
                             $scope.det = null;
                             $scope.selectedId = null;
                             $scope.olc = null;
+                            $scope.uploadState = false;
+                            removeMarker();
                         }
                     }
                 };
