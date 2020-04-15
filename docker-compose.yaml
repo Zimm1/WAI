@@ -9,7 +9,7 @@ services:
         - NODE_ENV=development
     volumes:
       - ./:/home/node/wai
-      - /home/node/wai/node_modules
+      - node_modules:/home/node/wai/node_modules
     ports:
       - ${APP_PORT}:8000
       - 443:443
@@ -26,3 +26,4 @@ services:
 
 volumes:
   wai-data:
+  node_modules:

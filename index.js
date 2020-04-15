@@ -7,6 +7,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('config');
 const http = require('http');
+const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
 
 const { logInit, logger } = require('./api/utils/logUtils');
 logInit();
@@ -19,6 +20,8 @@ const PORT = config.get('EXPRESS.PORT');
 
 async function expressInit() {
     const app = express();
+
+    app.use(redirectToHTTPS([/localhost:(\d{4})/]));
 
     app.use('/api', apiRouter);
     app.use(clientRouter);
