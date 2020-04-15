@@ -8,7 +8,7 @@
             const baseUriNominatim = "https://nominatim.openstreetmap.org";
 
             const LEVELS = 3;
-            const ENOUGH_CLIPS = 100;
+            const ENOUGH_CLIPS = 200;
             const OLC_CHARS = ['2', '3', '4', '5', '6','7', '8', '9', 'C', 'F', 'G', 'H', 'J', 'M', 'P', 'Q', 'R', 'V', 'W', 'X'];
             const OLC_DIRECTIONS = [ [-1, 1], [-1, 0], [-1, -1], [0, 1], [0, -1], [1, 1], [1, 0], [1, -1] ];
 
