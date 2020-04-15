@@ -26,8 +26,9 @@
                     map
                         .locate({setView: true, enableHighAccuracy: true})
                         .on('locationfound', (e) => {
-                            this.updateMarker(e.latlng);
-                            $scope.olc =  OpenLocationCode.encode(latLng.lat.toFixed(6), latLng.lng.toFixed(6));
+                            let latlng = e.latlng;
+                            this.updateMarker(latlng);
+                            $scope.olc =  OpenLocationCode.encode(latlng.lat.toFixed(6), latlng.lng.toFixed(6));
                             console.log($scope.olc);
                             map.invalidateSize();
                         })

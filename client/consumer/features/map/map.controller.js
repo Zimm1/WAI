@@ -291,7 +291,7 @@
                         poiMarkers.push(marker);
                     }
                 }
-                bindMarkerPopUp(0);
+                //bindMarkerPopUp(0);
             });
         };
 
