@@ -301,6 +301,6 @@
                 initRoute();
             }, 0);
         });
-        getLocation(false);
+        getLocation();
     }
 })();

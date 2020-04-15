@@ -5,6 +5,7 @@
     function PoiService($rootScope) {
         this.listPoi = new Map();
         this.cachePoi = [];
+        this.cacheClip = new Set();
         this.iconObj = {
             nat: {
                 icon: 'leaf',
@@ -103,6 +104,12 @@
                     continue;
                 }
 
+                if(this.cacheClip.has(clip.url)){
+                    continue;
+                }
+
+                this.cacheClip.add(clip.url);
+
                 if(!this.listPoi.has(clip.geoloc)) {
                     let obj = {
                         geoloc: clip.geoloc,
@@ -137,6 +144,7 @@
 
         this.clearMap = () => {
             this.listPoi.clear();
+            this.cacheClip.clear();
         }
 
         this.isEmpty = () => {

@@ -21,6 +21,22 @@
                 }
             };
 
+            const getLocation = () => {
+                map.then((map) => {
+                    map
+                        .locate({setView: true, enableHighAccuracy: true})
+                        .on('locationfound', (e) => {
+                            this.updateMarker(e.latlng);
+                            $scope.olc =  OpenLocationCode.encode(latLng.lat.toFixed(6), latLng.lng.toFixed(6));
+                            console.log($scope.olc);
+                            map.invalidateSize();
+                        })
+                        .on('locationerror', (e) => {
+                            console.log(e);
+                        });
+                });
+            };
+
             this.getCurrentUser = () => {
                 return AuthService.getCurrentUser();
             }
@@ -158,9 +174,9 @@
                             $scope.adnc = null;
                             $scope.det = null;
                             $scope.selectedId = null;
-                            $scope.olc = null;
                             $scope.uploadState = false;
-                            removeMarker();
+                            //$scope.olc = null;
+                            //removeMarker();
                         }
                     }
                 };
@@ -168,6 +184,9 @@
                 request.send(formData);
                 return false;
             }
+
+            getLocation();
+
         })
 
 
